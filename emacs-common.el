@@ -13,11 +13,13 @@
 ;; Also add the package
 (require 'package)
 (add-to-list 'package-archives
-             '("melpa" . "http://melpa.org/packages/") t)
-(add-to-list 'package-archives 
-	     '("marmalade" . "http://marmalade-repo.org/packages/"))
+             '("melpa" . "https://melpa.org/packages/"))
+;; (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
+;;                          ("marmalade" . "https://marmalade-repo.org/packages/")
+;;                          ("melpa" . "https://melpa.milkbox.net/packages/")))
 (package-initialize)
 
+(add-hook 'after-init-hook 'global-company-mode)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;--------------------------------------------------------------------
 ;; IPython
@@ -39,14 +41,20 @@
  python-shell-completion-string-code
  "';'.join(get_ipython().Completer.all_completions('''%s'''))\n")
 
+;;--------------------------------------------------------------------
+;; Scala
+(require 'ensime)
+(add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; org-mode (site-lisp is the install location)
 (load "orgmode-custom.el")
 
-;; ;;--------------------------------------------------------------------
-;; ;; R (ESS mode)
-;; (add-to-list 'load-path (concat elisp_path "/ess/current/lisp"))
-;; (load (concat shared_elisp_path "/ess/current/lisp/ess-site.el"))
+;;--------------------------------------------------------------------
+;; R (ESS mode)
+(setq ess-lispdir (concat elisp_path "/ESS/lisp"))
+(add-to-list 'load-path ess-lispdir)
+(load (concat ess-lispdir "/ess-site.el"))
 
 ;; web-mode @ http://web-mode.org
 (require 'web-mode)
