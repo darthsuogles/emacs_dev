@@ -1,3 +1,6 @@
 [submodule "ESS"]
 	path = ESS
 	url = https://github.com/emacs-ess/ESS.git
+[submodule "prfgnrl"]
+	path = prfgnrl
+	url = https://github.com/ProofGeneral/PG

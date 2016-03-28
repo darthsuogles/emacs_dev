@@ -51,10 +51,10 @@
 (load "orgmode-custom.el")
 
 ;;--------------------------------------------------------------------
-;; R (ESS mode)
-(setq ess-lispdir (concat elisp_path "/ESS/lisp"))
-(add-to-list 'load-path ess-lispdir)
-(load (concat ess-lispdir "/ess-site.el"))
+;; R (ESS mode) now in melpa
+;; (setq ess-lispdir (concat elisp_path "/ESS/lisp"))
+;; (add-to-list 'load-path ess-lispdir)
+;; (load (concat ess-lispdir "/ess-site.el"))
 
 ;; web-mode @ http://web-mode.org
 (require 'web-mode)
@@ -75,11 +75,11 @@
 )
 (add-hook 'web-mode-hook  'web-mode-custom-hook)
 (setq-default indent-tabs-mode t)
-;; ;; Coq
-;; ;; (setq auto-mode-alist (cons '("\\.v$" . coq-mode) auto-mode-alist))
-;; ;; (autoload 'coq-mode "coq" "Major mode for editing Coq vernacular." t)
-;; (load-file (concat shared_elisp_path "/proof_general/ProofGeneral/generic/proof-site.el"))
-;; ;;(load-file "/usr/local/share/emacs/site-lisp/ProofGeneral/generic/proof-site.el")
+
+;; Coq
+(load (concat elisp_path "/prfgnrl/generic/proof-site.el"))
+;;(setq auto-mode-alist (cons '("\\.v$" . coq-mode) auto-mode-alist))
+;; (autoload 'coq-mode "coq" "Major mode for editing Coq vernacular." t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Flyspell for spell checking
@@ -104,6 +104,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Visual stuffs, should be put here
 ;; in case they are modified by other modes
+
+;; Get switching buffer helper mode
+(require 'ido)
+(ido-mode t)
 
 ;; global settings
 (tool-bar-mode -1) ;; turning off the tool-bar
