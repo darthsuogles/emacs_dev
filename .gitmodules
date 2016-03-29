@@ -4,3 +4,6 @@
 [submodule "prfgnrl"]
 	path = prfgnrl
 	url = https://github.com/ProofGeneral/PG
+[submodule "solarized-emacs"]
+	path = solarized-emacs
+	url = https://github.com/bbatsov/solarized-emacs.git

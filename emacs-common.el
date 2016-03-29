@@ -110,7 +110,7 @@
 (ido-mode t)
 
 ;; global settings
-(tool-bar-mode -1) ;; turning off the tool-bar
+(tool-bar-mode nil) ;; turning off the tool-bar
 (transient-mark-mode t) 
 
 ;; All about the meta keys
@@ -126,9 +126,7 @@
 (load "emacs-rc-pretty-lambda.el")
 
 ;; New in Emacs 24, color theme, loaded at last
-;;(load-theme 'wombat t)
-(add-to-list 'custom-theme-load-path (concat elisp_path "/emacs-color-theme-solarized"))
-(load-theme 'solarized t)
+(load-theme 'solarized-dark "NO-CONFIRM")
 
 (setq ring-bell-function 'ignore)
 (setq visible-bell nil)
@@ -136,16 +134,3 @@
 (setq word-wrap t) ;; line wrapping
 
 (setq ns-pop-up-frames nil) ;; open new frames inside existing ones
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; System installed stuffs appended to the end of the file
-;; We will leave these lines along
-
-;;(require 'tex-site)
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(custom-safe-themes (quote ("d24e10524bb50385f7631400950ba488fa45560afcadd21e6e03c2f5d0fad194" default)))
- '(tool-bar-mode nil))
