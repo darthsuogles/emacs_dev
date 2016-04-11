@@ -7,3 +7,9 @@
 [submodule "solarized-emacs"]
 	path = solarized-emacs
 	url = https://github.com/bbatsov/solarized-emacs.git
+[submodule "xterm-color"]
+	path = xterm-color
+	url = https://github.com/atomontage/xterm-color
+[submodule "emacs-sbt-mode"]
+	path = emacs-sbt-mode
+	url = https://github.com/ensime/emacs-sbt-mode.git

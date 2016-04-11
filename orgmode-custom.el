@@ -55,7 +55,7 @@
   (interactive
    (let ((src-code-types '("emacs-lisp" "python" "C" "sh" "js" "C++" "css"
 			   "dot" "matlab" "sql" "ditaa" "haskell" "latex"
-			   "ocaml" "org" "perl" "ruby")))
+			   "scala" "ocaml" "org" "perl" "ruby")))
      (list (ido-completing-read "Source code type: " src-code-types))))
    (progn
      (newline-and-indent)
@@ -86,11 +86,10 @@
 	))
 
 (add-to-list 'org-latex-classes
-	     '("org-article"
-	       ;;"\\documentclass{org-article}[article,letterpaper,11pt]
-	       "\\documentclass{article}[article,letterpaper,11pt]
+	     '("org-bare-metal"
+	       "\\documentclass{article}[letterpaper,11pt]
                 [NO-DEFAULT-PACKAGES]
-                \\usepackage{nips_mod}
+                \\usepackage{qtfd}
                 [PACKAGES]
                 [EXTRA]"
 	       ("\\section{%s}" . "\\section*{%s}")
