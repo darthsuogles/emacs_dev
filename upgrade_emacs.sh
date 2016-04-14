@@ -1,6 +1,10 @@
 #!/bin/bash
 
 base_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+OS=$(uname -s | tr '[:upper:]' '[:lower:]')
+if [ "${OS}" != 'darwin' ]; then
+    echo "the operating system ${OS} is not supported"; exit
+fi
 
 brew upgrade emacs || \
     brew install emacs \

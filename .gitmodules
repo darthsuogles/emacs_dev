@@ -13,3 +13,9 @@
 [submodule "emacs-sbt-mode"]
 	path = emacs-sbt-mode
 	url = https://github.com/ensime/emacs-sbt-mode.git
+[submodule "emacs-async"]
+	path = emacs-async
+	url = https://github.com/jwiegley/emacs-async.git
+[submodule "use-package"]
+	path = use-package
+	url = https://github.com/jwiegley/use-package.git

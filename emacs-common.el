@@ -12,12 +12,40 @@
 ;;--------------------------------------------------------------------
 ;; Also add the package
 (require 'package)
-(add-to-list 'package-archives
-             '("melpa" . "https://melpa.org/packages/"))
-;; (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
-;;                          ("marmalade" . "https://marmalade-repo.org/packages/")
-;;                          ("melpa" . "https://melpa.milkbox.net/packages/")))
+(add-to-list 'load-path (concat elisp_path "/use-package"))
+(setq
+ use-package-always-ensure t
+ package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
+		    ("org" . "http://orgmode.org/elpa/")
+                    ("melpa" . "http://melpa.org/packages/")))
+
 (package-initialize)
+(when (not package-archive-contents)
+  (package-refresh-contents)
+  (package-install 'use-package)
+  (package-install 'async))
+(require 'use-package) ;; get the dependencies
+(dired-async-mode 1) ;; 
+
+(defvar package-depslist
+  '(helm s company magit projectile dash async use-package evil
+	 web-mode ess lua-mode z3-mode
+	 ensime scala-mode2 sbt-mode
+	 solarized-theme xterm-color)
+  "A list of dependencies to be installed")
+
+(require 'cl) ;; use the common-lisp extension
+(defun package-deps-installed-p ()
+  "Return true if the dependencies are all installed"
+  (loop for pkg in package-depslist
+	when (not (package-installed-p pkg)) do (return nil)
+	finally (return t)))
+
+(unless (package-deps-installed-p)
+  (package-refresh-contents)
+  (dolist (pkg package-depslist)
+    (when (not (package-installed-p pkg))
+      (package-install pkg))))
 
 (add-hook 'after-init-hook 'global-company-mode)
 
@@ -70,9 +98,27 @@
 
 ;;--------------------------------------------------------------------
 ;; Scala
-(require 'ensime)
-(add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
-(add-to-list 'auto-mode-alist '("\\.sclpt\\'" . scala-mode))
+;; <<<<<<< HEAD
+;; (require 'ensime)
+;; (add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
+;; (add-to-list 'auto-mode-alist '("\\.sclpt\\'" . scala-mode))
+;; =======
+(require 'scala-mode2)
+(defun scala-spark-shell ()
+  (interactive)
+  (scala-run-scala "~/spark/spark-shell.sh"))
+(defun scala-mode2-keymap ()
+  "Modify mode for scala sbt"
+  (local-set-key (kbd "C-c C-r") 'scala-eval-region)
+  (local-set-key (kbd "C-c C-c") 'scala-eval-definition)
+  (local-set-key (kbd "C-c C-z") 'scala-spark-shell)
+  ;; more here
+  )
+(add-hook 'scala-mode-hook 'scala-mode2-keymap)
+
+;; (require 'ensime)
+;; (add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
+;; >>>>>>> 78a6cb7cce819b9afc36f913e2b2ec45c0e3b12e
 
 (add-to-list 'load-path (concat elisp_path "/emacs-sbt-mode"))
 (use-package sbt-mode
@@ -162,7 +208,7 @@ mode."
   ;; more here
   )
 ;; add to hook
-(add-hook 'scala-mode-hook 'scala-sbt-mode-keymap)
+;;(add-hook 'scala-mode-hook 'scala-sbt-mode-keymap)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -221,17 +267,30 @@ mode."
 ;; 	    ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Visual stuffs, should be put here
-;; in case they are modified by other modes
+;; Global Settings
+;; - in case they are modified by other modes
 
-;; Get switching buffer helper mode
-(require 'ido)
-(ido-mode t)
-(setq ido-enable-flex-matching t)
-;;(setq ido-everywhere t)
+;; global variables
+(setq
+ inhibit-startup-screen t
+ create-lockfiles nil
+ make-backup-files nil
+ column-number-mode t
+ scroll-error-top-bottom t
+ show-paren-delay 0.5 
+ sentence-end-double-space nil)
 
-;; global settings
-(tool-bar-mode nil) ;; turning off the tool-bar
+;; buffer local variables
+(setq-default
+ indent-tabs-mode nil
+ tab-width 4
+ c-basic-offset 4)
+
+;; modes
+(electric-indent-mode 0)
+
+
+;;(tool-bar-mode nil) ;; turning off the tool-bar
 (transient-mark-mode t) 
 
 ;; All about the meta keys
