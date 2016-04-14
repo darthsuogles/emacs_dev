@@ -72,6 +72,7 @@
 ;; Scala
 (require 'ensime)
 (add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
+(add-to-list 'auto-mode-alist '("\\.sclpt\\'" . scala-mode))
 
 (add-to-list 'load-path (concat elisp_path "/emacs-sbt-mode"))
 (use-package sbt-mode
@@ -145,6 +146,15 @@ mode."
     (message "sbt console paste termination signal sent")) 
   )
 
+;; Scala custom keys
+(defun scala-insert-arrow-assign () (interactive) (insert "<-"))
+(defun scala-mode-keymap ()
+  ""
+  (local-set-key (kbd "M-_") 'scala-insert-arrow-assign)
+  )
+(add-hook 'scala-mode-hook 'scala-mode-keymap)
+
+;; Scal SBT mode custom keys
 (defun scala-sbt-mode-keymap ()
   "Modify mode for scala sbt"
   (local-set-key (kbd "C-c C-b C-r") 'sbt-paste-region)
