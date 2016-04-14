@@ -18,6 +18,10 @@
 ;;                          ("marmalade" . "https://marmalade-repo.org/packages/")
 ;;                          ("melpa" . "https://melpa.milkbox.net/packages/")))
 (package-initialize)
+(when (not package-archive-contents)
+  (package-refresh-contents)
+  (package-install 'use-package))
+(require 'use-package)
 
 (add-hook 'after-init-hook 'global-company-mode)
 
@@ -70,8 +74,21 @@
 
 ;;--------------------------------------------------------------------
 ;; Scala
-(require 'ensime)
-(add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
+(require 'scala-mode2)
+(defun scala-spark-shell ()
+  (interactive)
+  (scala-run-scala "~/spark/spark-shell.sh"))
+(defun scala-mode2-keymap ()
+  "Modify mode for scala sbt"
+  (local-set-key (kbd "C-c C-r") 'scala-eval-region)
+  (local-set-key (kbd "C-c C-c") 'scala-eval-definition)
+  (local-set-key (kbd "C-c C-z") 'scala-spark-shell)
+  ;; more here
+  )
+(add-hook 'scala-mode-hook 'scala-mode2-keymap)
+
+;; (require 'ensime)
+;; (add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
 
 (add-to-list 'load-path (concat elisp_path "/emacs-sbt-mode"))
 (use-package sbt-mode
@@ -152,7 +169,7 @@ mode."
   ;; more here
   )
 ;; add to hook
-(add-hook 'scala-mode-hook 'scala-sbt-mode-keymap)
+;;(add-hook 'scala-mode-hook 'scala-sbt-mode-keymap)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -221,7 +238,7 @@ mode."
 ;;(setq ido-everywhere t)
 
 ;; global settings
-(tool-bar-mode nil) ;; turning off the tool-bar
+;;(tool-bar-mode nil) ;; turning off the tool-bar
 (transient-mark-mode t) 
 
 ;; All about the meta keys
