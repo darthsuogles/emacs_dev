@@ -6,15 +6,19 @@
 ;; (add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
 ;; (add-to-list 'auto-mode-alist '("\\.sclpt\\'" . scala-mode))
 ;; =======
-(defun scala-insert-arrow-assign () (interactive) (insert "<-"))
+(defun scala-insert-left-arrow () (interactive) (insert "<-"))
+(defun scala-insert-typesafe-arrow () (interactive) (insert "~>"))
+
 (defun scala-spark-shell () (interactive) (scala-run-scala "./spark-shell.sh"))
 
 (use-package scala-mode2
   :mode ("\\.sclpt\\'" . scala-mode)
-  :bind (("C-c C-r" . scala-eval-region)
-         ("C-c C-c" . scala-eval-definition)
-         ("C-c C-z" . scala-spark-shell)
-	 ("M-_"     . scala-insert-arrow-assign))
+  :bind (:map scala-mode-map
+              ("C-c C-r" . scala-eval-region)
+              ("C-c C-c" . scala-eval-definition)
+              ("C-c C-z" . scala-spark-shell)
+              ("M-_"     . scala-insert-left-arrow)
+              ("M-+"     . scala-insert-right-arrow))
   )
 
 ;; (require 'ensime)
