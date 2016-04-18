@@ -41,7 +41,7 @@
 
 (defvar package-depslist
   '(helm s company magit projectile dash async 
-         use-package evil helm-flx
+         use-package evil helm-flx swiper-helm
          web-mode ess lua-mode z3-mode
          ensime scala-mode2 sbt-mode
          solarized-theme xterm-color)

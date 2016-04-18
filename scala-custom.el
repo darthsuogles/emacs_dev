@@ -18,7 +18,7 @@
               ("C-c C-c" . scala-eval-definition)
               ("C-c C-z" . scala-spark-shell)
               ("M-_"     . scala-insert-left-arrow)
-              ("M-+"     . scala-insert-right-arrow))
+              ("M-+"     . scala-insert-typesafe-arrow))
   )
 
 ;; (require 'ensime)
