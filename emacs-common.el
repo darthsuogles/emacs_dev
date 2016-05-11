@@ -61,13 +61,29 @@
       (package-install pkg))))
 
 (use-package helm
+  :commands helm-config
+  :init (setq 
+         helm-apropos-fuzzy-match t
+         helm-split-window-in-side-p t
+         helm-move-to-line-cycle-in-source t
+         helm-ff-search-library-in-sexp t
+         helm-scroll-amount 8
+         helm-ff-file-name-history-use-recentf t
+         helm-buffers-fuzzy-matching t
+         helm-recentf-fuzzy-match t
+         helm-semantic-or-imenu t)
+  :config (helm-mode 1)
   :bind (("M-x" . helm-M-x)
          ("C-x C-m" . helm-M-x)
          ("C-c C-m" . helm-M-x)
          ("C-x b" . helm-mini)
          ("C-x C-f" . helm-find-files)
-         ;;:map helm-mode-map
-         ("C-c h" . helm-execute-persistent-action))
+         ("C-x c a" . helm-apropos)
+         ("C-c h" . helm-apropos)
+         :map helm-map
+         ("<tab>" . helm-execute-persistent-action)
+         ("C-i" . helm-execute-persistent-action)
+         ("C-z" . helm-select-action))
 )
 
 (use-package company
@@ -125,6 +141,36 @@
 ;;--------------------------------------------------------------------
 ;; Scala
 (load "scala-custom.el")
+
+;;--------------------------------------------------------------------
+;; Lua / Torch7
+(require 'torch-mode)
+(autoload 'torch-mode "lua-mode" "Lua editing mode." t)
+(add-to-list 'auto-mode-alist '("\\.lua$" . torch-mode))
+(add-to-list 'interpreter-mode-alist '("th" . torch-mode))
+;; (setq 
+;;  torch-default-application "th"
+;;  torch-default-command-switches '("-i" "-g" "-a" "torch_repl_init.lua")
+;;  )  
+
+;; (use-package torch-mode
+;;   :load-path elisp_path
+;;   :pin manual
+;;   :mode "\\.lua\\'"
+;;   :interpreter "th"
+;;   :init
+;;   (setq 
+;;    torch-default-application "th"
+;;    torch-default-command-switches '("-i" "-g" "-a" "torch_repl_init.lua")
+;;    )  
+;;   :bind
+;;   (:map torch-mode-map
+;;         ("C-c C-z" . run-torch)
+;;         ("C-c C-c" . torch-send-defun) 
+;;         ("C-c C-l" . torch-send-current-line)
+;;         ("C-c C-r" . torch-send-region)
+;;    )
+;;   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; org-mode (site-lisp is the install location)
