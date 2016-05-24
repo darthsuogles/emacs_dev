@@ -11,15 +11,33 @@
 
 (defun scala-spark-shell () (interactive) (scala-run-scala "./spark-shell.sh"))
 
-(use-package scala-mode2
-  :mode ("\\.sclpt\\'" . scala-mode)
-  :bind (:map scala-mode-map
-              ("C-c C-r" . scala-eval-region)
-              ("C-c C-c" . scala-eval-definition)
-              ("C-c C-z" . scala-spark-shell)
-              ("M-_"     . scala-insert-left-arrow)
-              ("M-+"     . scala-insert-typesafe-arrow))
+;; (add-to-list 'package-archives
+;; 	     '("melpa" . "http://melpa.milkbox.net/packages/") t)
+;; (package-initialize)
+;; (unless (package-installed-p 'scala-mode2)
+;;   (package-refresh-contents) (package-install 'scala-mode2))
+(add-to-list 'load-path (concat elisp_path "/scala-mode2"))
+(require 'scala-mode2)
+(add-to-list 'auto-mode-alist '("\\.sclpt\\'" . scala-mode2))
+(add-to-list 'auto-mode-alist '("\\.scala\\'" . scala-mode2))
+(defun scala-mode2-keybindings ()
+  (local-set-key (kbd "C-c C-r") 'scala-eval-region)
+  (local-set-key (kbd "C-c C-c") 'scala-eval-definition)
+  (local-set-key (kbd "C-c C-z") 'scala-spark-shell)
+  (local-set-key (kbd "M-_") 'scala-insert-left-arrow)
+  (local-set-key (kbd "M-+") 'scala-insert-typesafe-arrow)
   )
+(add-hook 'scala-mode2-hook 'scala-mode2-keybindings)
+ 
+;; (use-package scala-mode2
+;;   :mode ("\\.sclpt\\'" . scala-mode)
+;;   :bind (:map scala-mode-map
+;;               ("C-c C-r" . scala-eval-region)
+;;               ("C-c C-c" . scala-eval-definition)
+;;               ("C-c C-z" . scala-spark-shell)
+;;               ("M-_"     . scala-insert-left-arrow)
+;;               ("M-+"     . scala-insert-typesafe-arrow))
+;;   )
 
 ;; For now, don't bother to use ensime
 ;; (require 'ensime)
