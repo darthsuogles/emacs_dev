@@ -1,6 +1,11 @@
 #!/bin/bash
 
-base_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+base_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+(cd "${base_dir}"
+ git submodule foreach bash -c 'if [ -f Makefile ]; then make clean && make; fi'
+)
+
 OS=$(uname -s | tr '[:upper:]' '[:lower:]')
 if [ "${OS}" != 'darwin' ]; then
     echo "the operating system ${OS} is not supported"; exit

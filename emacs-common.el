@@ -29,7 +29,8 @@
  use-package-always-ensure t
  package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
                     ("org" . "http://orgmode.org/elpa/")
-                    ("melpa" . "http://melpa.org/packages/")))
+                    ("melpa" . "http://melpa.org/packages/")
+		    ("milkbox" . "http://melpa.milkbox.net/packages/")))
 
 (package-initialize)
 (when (not package-archive-contents)
@@ -43,7 +44,7 @@
   '(helm s company magit projectile dash async 
          use-package evil helm-flx swiper-helm
          web-mode ess lua-mode z3-mode
-         ensime scala-mode2 sbt-mode
+         ensime sbt-mode
          solarized-theme xterm-color)
   "A list of dependencies to be installed")
 
@@ -128,14 +129,7 @@
   (setq
    python-shell-interpreter "ipython"
    python-shell-interpreter-args "--pylab"
-   ;; python-shell-prompt-regexp "In \\[[0-9]+\\]: "
-   ;; python-shell-prompt-output-regexp "Out\\[[0-9]+\\]: "
-   ;; python-shell-completion-setup-code
-   ;; "from IPython.core.completerlib import module_completion"
-   ;; python-shell-completion-module-string-code
-   ;; "';'.join(module_completion('''%s'''))\n"
-   ;; python-shell-completion-string-code
-   ;; "';'.join(get_ipython().Completer.all_completions('''%s'''))\n")
+   )
   )
 )
 
