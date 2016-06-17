@@ -54,6 +54,7 @@
    'minibuffer-complete-word
    'self-insert-command
    minibuffer-local-completion-map)
+  (setq sbt:program-name "./scala_exec.sh -b")
   :bind (("C-c C-b C-c" . sbt-start)
          :map scala-mode-map
          ("C-c C-r" . sbt-send-region)
