@@ -1,11 +1,9 @@
 ;; additional .el load path
 (setq elisp_path "~/CodeBase/emacs_dev")
 
-;; <<<<<<< HEAD
-;; (require 'ensime)
-;; (add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
-;; (add-to-list 'auto-mode-alist '("\\.sclpt\\'" . scala-mode))
-;; =======
+;; (use-package ensime
+;;   :pin melpa-stable)
+;; ;; =======
 (defun scala-insert-left-arrow () (interactive) (insert "<-"))
 (defun scala-insert-typesafe-arrow () (interactive) (insert "~>"))
 
@@ -16,6 +14,8 @@
 ;;   (package-refresh-contents) (package-install 'scala-mode2))
 (add-to-list 'load-path (concat elisp_path "/scala-mode2"))
 (require 'scala-mode2)
+(add-to-list 'auto-mode-alist '("\\.sclpt\\'" . scala-mode))
+(add-to-list 'auto-mode-alist '("\\.scala\\'" . scala-mode))
 (require 'spark-shell-mode)
 (add-to-list 'auto-mode-alist '("\\.sclpt\\'" . scala-mode))
 (add-to-list 'auto-mode-alist '("\\.scala\\'" . scala-mode))
@@ -45,6 +45,7 @@
          :map scala-mode-map
          ("C-c C-r" . sbt-send-region)
          ("C-c C-p" . sbt-paste-region)
+         ("C-c C-a" . sbt-paste-region-ammonite)
          ("C-c C-z" . sbt-start))
   :config
   (setq sbt:program-name "./scala_exec.sh -b")

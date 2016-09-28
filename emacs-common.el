@@ -30,7 +30,8 @@
  package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
                     ("org" . "http://orgmode.org/elpa/")
                     ("melpa" . "http://melpa.org/packages/")
-		    ("milkbox" . "http://melpa.milkbox.net/packages/")))
+		    ("melpa-stable" . "https://stable.melpa.org/packages/")
+                    ))
 
 (package-initialize)
 (when (not package-archive-contents)
@@ -169,6 +170,17 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; org-mode (site-lisp is the install location)
 (load "orgmode-custom.el")
+
+(require 'org2blog-autoloads)
+(setq org2blog/wp-blog-alist
+      '(("quantipress"
+         :url "http://wordpress.quantifind.com/xmlrpc.php"
+         :username "philip"
+         :default-categories ("data-science" "emacs")
+         :tags-as-categories nil)
+        ))
+
+
 
 ;; web-mode @ http://web-mode.org
 (use-package web-mode
