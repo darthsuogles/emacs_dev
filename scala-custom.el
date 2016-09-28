@@ -1,11 +1,9 @@
 ;; additional .el load path
 (setq elisp_path "~/CodeBase/emacs_dev")
 
-;; <<<<<<< HEAD
-;; (require 'ensime)
-;; (add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
-;; (add-to-list 'auto-mode-alist '("\\.sclpt\\'" . scala-mode))
-;; =======
+;; (use-package ensime
+;;   :pin melpa-stable)
+;; ;; =======
 (defun scala-insert-left-arrow () (interactive) (insert "<-"))
 (defun scala-insert-typesafe-arrow () (interactive) (insert "~>"))
 
@@ -18,8 +16,8 @@
 ;;   (package-refresh-contents) (package-install 'scala-mode2))
 (add-to-list 'load-path (concat elisp_path "/scala-mode2"))
 (require 'scala-mode2)
-(add-to-list 'auto-mode-alist '("\\.sclpt\\'" . scala-mode2))
-(add-to-list 'auto-mode-alist '("\\.scala\\'" . scala-mode2))
+(add-to-list 'auto-mode-alist '("\\.sclpt\\'" . scala-mode))
+(add-to-list 'auto-mode-alist '("\\.scala\\'" . scala-mode))
 (defun scala-mode2-keybindings ()
   (local-set-key (kbd "C-c C-r") 'scala-eval-region)
   (local-set-key (kbd "C-c C-c") 'scala-eval-definition)
@@ -27,21 +25,7 @@
   (local-set-key (kbd "M-_") 'scala-insert-left-arrow)
   (local-set-key (kbd "M-+") 'scala-insert-typesafe-arrow)
   )
-(add-hook 'scala-mode2-hook 'scala-mode2-keybindings)
- 
-;; (use-package scala-mode2
-;;   :mode ("\\.sclpt\\'" . scala-mode)
-;;   :bind (:map scala-mode-map
-;;               ("C-c C-r" . scala-eval-region)
-;;               ("C-c C-c" . scala-eval-definition)
-;;               ("C-c C-z" . scala-spark-shell)
-;;               ("M-_"     . scala-insert-left-arrow)
-;;               ("M-+"     . scala-insert-typesafe-arrow))
-;;   )
-
-;; For now, don't bother to use ensime
-;; (require 'ensime)
-;; (add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
+(add-hook 'scala-mode-hook 'scala-mode2-keybindings)
 
 (add-to-list 'load-path (concat elisp_path "/emacs-sbt-mode"))
 ;; Scal SBT mode custom keys
@@ -58,46 +42,23 @@
          :map scala-mode-map
          ("C-c C-r" . sbt-send-region)
          ("C-c C-p" . sbt-paste-region)
+         ("C-c C-a" . sbt-paste-region-ammonite)
          ("C-c C-z" . sbt-start))
   )
 
-;; (defun sbt:paste-region (start end &optional no-exit)
-;;   "Send region (from START to END) using :paste REPL command.
+(defun sbt-paste-region-ammonite (&optional no-exit)
+  "Send the selected region (between the mark and the current
+point) to the sbt process of the current buffer's sbt project
+using :paste REPL command.  Whitespace and comments at the
+beginning or end of the region are not sent.  If the optional
+NO-EXIT is non-zero, it will not exit the :paste session, so that
+subsequent call to this function may provide additional input."
+  (interactive "P")
+  ;; TODO: Currently, NO-EXIT does not work correctly.
+  ;; (sbt:paste-region (region-beginning) (region-end) arg)
+  (sbt-paste-region-ammonite-impl (region-beginning) (region-end)))
 
-;; Using the EOF mode instead of C-D to avoid troubles
-
-;; If NO-EXIT is non-zero, this function will not end the paste
-;; mode."
-;;   (unless (comint-check-proc (sbt:buffer-name))
-;;     (error "sbt is not running in buffer %s" (sbt:buffer-name)))
-;;   (save-excursion
-;;     (goto-char end)
-;;     (skip-syntax-forward ">")
-;;     (forward-comment (- (point-max)))
-;;     (setq end (point)))
-;;   (save-excursion
-;;     (goto-char start)
-;;     (forward-comment (point-max))
-;;     (setq start (point)))
-;;   (unless (> end start) (error "mark a region of code first"))
-;;   (display-buffer (sbt:buffer-name))
-;;   (let ((submode (buffer-local-value 'sbt:submode
-;;                                      (get-buffer (sbt:buffer-name)))))    
-;;     (while (eq submode 'sbt)
-;;       (sbt-command "console") (error "must wait till we are in console mode"))
-;;     (message "submode: %s" submode)
-;;     (unless (eq submode 'paste-mode)
-;;       (comint-send-string (sbt:buffer-name) ":paste\n"))
-;;     (comint-send-region (sbt:buffer-name) start end)
-;;     (message "sbt code segment sent")
-;;     (comint-send-string (sbt:buffer-name) "\n\^D")
-;;     (message "sbt console paste termination signal sent")) 
-;;   )
-
-;; (defvar ammonite-prompt-regexp "^\\(?:\\[[^@]+@[^@]+\\]\\)"
-;;   "Prompt for `run-scala-ammonite'.")
-
-(defun sbt:paste-region-ammonite (start end)
+(defun sbt-paste-region-ammonite-impl (start end)
   "Send region (from START to END) using :paste REPL command."
   (unless (comint-check-proc (sbt:buffer-name))
     (error "sbt is not running in buffer %s" (sbt:buffer-name)))  
@@ -113,14 +74,9 @@
   (unless (> end start) (error "mark a region of code first"))
   (display-buffer (sbt:buffer-name))
   (let ((submode (buffer-local-value 'sbt:submode
-                                     (get-buffer (sbt:buffer-name)))))    
-    (while (eq submode 'sbt)
-      (sbt-command "console") (error "must wait till we are in console mode"))
-    (message "submode: %s" submode)
-    (unless (eq submode 'paste-mode)
-      (comint-send-string (sbt:buffer-name) ":paste\n"))
+                                     (get-buffer (sbt:buffer-name)))))
+    (comint-send-string (sbt:buffer-name) "{\n")
     (comint-send-region (sbt:buffer-name) start end)
-    (message "sbt code segment sent")
-    (comint-send-string (sbt:buffer-name) "\n\^D")
-    (message "sbt console paste termination signal sent")) 
+    (comint-send-string (sbt:buffer-name) "\n}\n")
+    (message "sbt console paste termination signal sent"))
   )
