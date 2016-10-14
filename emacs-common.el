@@ -180,14 +180,14 @@
 ;; org-mode (site-lisp is the install location)
 (load "orgmode-custom.el")
 
-(require 'org2blog-autoloads)
-(setq org2blog/wp-blog-alist
-      '(("quantipress"
-         :url "http://wordpress.quantifind.com/xmlrpc.php"
-         :username "philip"
-         :default-categories ("data-science" "emacs")
-         :tags-as-categories nil)
-        ))
+;;(require 'org2blog-autoloads)
+;;(setq org2blog/wp-blog-alist
+;;      '(("quantipress"
+;;         :url "http://wordpress.quantifind.com/xmlrpc.php"
+;;        :username "philip"
+;;         :default-categories ("data-science" "emacs")
+;;         :tags-as-categories nil)
+;;        ))
 
 
 
