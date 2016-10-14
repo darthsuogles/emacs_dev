@@ -4,6 +4,14 @@
 ;; additional .el load path
 (setq elisp_path "~/CodeBase/emacs_dev")
 (add-to-list 'load-path elisp_path)
+(dolist (pkg_dir '("solarized-emacs"
+                   "use-package"
+                   "xterm-color"
+                   "emacs-async"
+                   "emacs-sbt-mode"
+                   "scala-mode2"))
+  (add-to-list 'load-path (concat elisp_path "/" pkg_dir)))
+
 
 ;; Very basic key modifications for OSX
 ;; Duplicated at the end of the file for fear that some mode might modify them
@@ -30,8 +38,8 @@
  package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
                     ("org" . "http://orgmode.org/elpa/")
                     ("melpa" . "http://melpa.org/packages/")
-		    ("melpa-stable" . "https://stable.melpa.org/packages/")
-                    ))
+                    ("milkbox" . "http://melpa.milkbox.net/packages/")
+                    ("elpy" . "http://jorgenschaefer.github.io/packages/")))
 
 (package-initialize)
 (when (not package-archive-contents)
@@ -45,8 +53,8 @@
   '(helm s company magit projectile dash async 
          use-package evil helm-flx swiper-helm
          web-mode ess lua-mode z3-mode
-         ensime sbt-mode
-         solarized-theme xterm-color)
+         ensime sbt-mode elpy
+         solarized-theme)
   "A list of dependencies to be installed")
 
 (require 'cl) ;; use the common-lisp extension
@@ -86,13 +94,13 @@
          ("<tab>" . helm-execute-persistent-action)
          ("C-i" . helm-execute-persistent-action)
          ("C-z" . helm-select-action))
-)
+  )
 
 (use-package company
   :init
   (add-hook 'after-init-hook 'global-company-mode)
   ;;(add-hook 'after-init-hook 'company-statistics-mode t)
-)
+  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;--------------------------------------------------------------------
@@ -100,13 +108,13 @@
 
 ;; comint install
 ;; Also remember to set TERM accordingly (xterm-256color)
+;; Keep up-to-date https://github.com/atomontage/xterm-color
 (use-package xterm-color
   :load-path "xterm-color/"
   :config
   (add-hook 'comint-preoutput-filter-functions 'xterm-color-filter)
   (setq comint-output-filter-functions (remove 'ansi-color-process-output comint-output-filter-functions))
-  (setq font-lock-unfontify-region-function 'xterm-color-unfontify-region)
-)
+  )
 
 ;; You can also use it with eshell (and thus get color output from system ls):
 (use-package eshell
@@ -116,20 +124,21 @@
   :config
   (add-to-list 'eshell-preoutput-filter-functions 'xterm-color-filter)
   (setq eshell-output-filter-functions (remove 'eshell-handle-ansi-color eshell-output-filter-functions))
-)
+  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;--------------------------------------------------------------------
-;; IPython
+;; Programming Language Environment
 ;;
-;; Warning: do not use the master branch python.el
-;; Please byte-compile the emacs-24 branch
+;;--------------------------------------------------------------------
+;; Python
+(elpy-enable)
 (use-package python
   :mode ("\\.py\\'" . python-mode)
   :init
   (setq
    python-shell-interpreter "ipython"
-   python-shell-interpreter-args "--pylab"
+   python-shell-interpreter-args "--simple-prompt -i"
    )
   )
 
@@ -212,7 +221,7 @@
     (add-hook hook (lambda () (flyspell-mode 1))))
   (dolist (hook '(change-log-mode-hook log-edit-mode-hook))
     (add-hook hook (lambda () (flyspell-mode nil)))) 
-)
+  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Global Settings

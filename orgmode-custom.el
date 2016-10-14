@@ -43,7 +43,7 @@
          (ditaa . t)
          (R . t)
          (python . t)
-         (ruby . t)
+         (scala . t)
          (sh . t)
          (org . t)
          (latex . t))))

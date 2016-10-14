@@ -3,7 +3,7 @@
 base_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 (cd "${base_dir}"
- git submodule foreach bash -c 'if [ -f Makefile ]; then make clean && make; fi'
+ git submodule foreach 'git checkout master ; git pull; if [ -f Makefile ]; then make clean && make; fi'
 )
 
 function update_darwin() {

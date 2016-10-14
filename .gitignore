@@ -4,3 +4,5 @@
 *.tbz2
 
 #prfgnrl
+*.out
+TAGS

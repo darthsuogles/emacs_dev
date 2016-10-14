@@ -1,17 +1,8 @@
 ;; additional .el load path
 (setq elisp_path "~/CodeBase/emacs_dev")
 
-;; (use-package ensime
-;;   :pin melpa-stable)
-;; ;; =======
 (defun scala-insert-left-arrow () (interactive) (insert "<-"))
 (defun scala-insert-typesafe-arrow () (interactive) (insert "~>"))
-
-;; (add-to-list 'package-archives
-;; 	     '("melpa" . "http://melpa.milkbox.net/packages/") t)
-;; (package-initialize)
-;; (unless (package-installed-p 'scala-mode2)
-;;   (package-refresh-contents) (package-install 'scala-mode2))
 (add-to-list 'load-path (concat elisp_path "/scala-mode2"))
 (require 'scala-mode2)
 (add-to-list 'auto-mode-alist '("\\.sclpt\\'" . scala-mode))
@@ -41,6 +32,7 @@
    'minibuffer-complete-word
    'self-insert-command
    minibuffer-local-completion-map)
+  (setq sbt:program-name "./scala_exec.sh -b")
   :bind (("C-c C-b C-c" . sbt-start)
          :map scala-mode-map
          ("C-c C-r" . sbt-send-region)
