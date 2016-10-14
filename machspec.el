@@ -1,4 +1,5 @@
 ;; All the "portable" settings
+;; These are useful for only the macOS cocoa version
 (load "~/CodeBase/emacs_dev/emacs-common.el")
 
 ;; Settings for machine specific customization

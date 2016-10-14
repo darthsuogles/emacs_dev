@@ -26,6 +26,7 @@
 
 ;;(require 'ox-bibtex)
 (require 'ox-beamer)
+(require 'ox-md)
 
 ;; Bibliography: org-bibnote-exp
 (require 'org-bibnote-exp)
