@@ -1,6 +1,6 @@
 ;; org-mode
-;;(add-to-list 'load-path (concat elisp_path "/orgmode/current/lisp"))
-;;(add-to-list 'load-path (concat elisp_path "/orgmode/current/contrib/lisp"))
+(add-to-list 'load-path (concat elisp_path "/org-mode/lisp"))
+(add-to-list 'load-path (concat elisp_path "/org-mode/contrib/lisp"))
 
 (setq org-root "~/org")
 (add-to-list 'auto-mode-alist '("\\.\\(org\\  |org_archive\\|txt\\)$" . org-mode))
@@ -27,6 +27,7 @@
 ;;(require 'ox-bibtex)
 (require 'ox-beamer)
 (require 'ox-md)
+(require 'ox-confluence)
 
 ;; Bibliography: org-bibnote-exp
 (require 'org-bibnote-exp)
@@ -34,6 +35,7 @@
 (setq org-latex-create-formula-image-program 'imagemagick)
 
 ;; org babel: display source code for different languages
+;; https://github.com/syl20bnr/spacemacs/issues/3314
 (org-babel-do-load-languages
  (quote org-babel-load-languages)
  (quote ((emacs-lisp . t)
@@ -41,7 +43,7 @@
          (ditaa . t)
          (R . t)
          (python . t)
-         (ruby . t)
+         (scala . t)
          (sh . t)
          (org . t)
          (latex . t))))
