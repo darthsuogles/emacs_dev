@@ -133,14 +133,17 @@
 ;;--------------------------------------------------------------------
 ;; Python
 (elpy-enable)
-(use-package python
-  :mode ("\\.py\\'" . python-mode)
-  :init
-  (setq
-   python-shell-interpreter "ipython"
-   python-shell-interpreter-args "--simple-prompt -i"
-   )
-  )
+(setq elpy-rpc-python-command "python3")
+(setq elpy-rpc-backend "jedi")
+(setq elpy-interactive-python-command "ipython3 --simple-prompt -i")
+;; (use-package python
+;;   :mode ("\\.py\\'" . python-mode)
+;;   :init
+;;   (setq
+;;    python-shell-interpreter "ipython3"
+;;    python-shell-interpreter-args "--simple-prompt -i"
+;;    )
+;;   )
 
 ;;--------------------------------------------------------------------
 ;; Scala
