@@ -4,8 +4,7 @@
 ;; additional .el load path
 (setq elisp_path "~/CodeBase/emacs_dev")
 (add-to-list 'load-path elisp_path)
-(dolist (pkg_dir '("solarized-emacs"
-                   "use-package"
+(dolist (pkg_dir '("use-package"
                    "xterm-color"
                    "emacs-async"
                    "emacs-sbt-mode"
@@ -133,9 +132,26 @@
 ;;--------------------------------------------------------------------
 ;; Python
 (elpy-enable)
-(setq elpy-rpc-python-command "python3")
+(setq elpy-rpc-python-command "python3")  ;; use a default python
 (setq elpy-rpc-backend "jedi")
-(setq elpy-interactive-python-command "ipython3 --simple-prompt -i")
+(elpy-use-ipython "ipython3")
+(setq python-shell-interpreter "ipython3")
+(setq python-shell-interpreter-args "--simple-prompt --pprint")
+(setq python-shell-prompt-detect-enabled nil)
+(setq python-shell-prompt-detect-failure-warning nil)
+
+;; https://github.com/emacs-mirror/emacs/commit/dbb341022870ecad4c9177485a6770a355633cc0
+(defun python-shell-completion-native-try ()
+  "Return non-nil if can trigger native completion."
+  (let ((python-shell-completion-native-enable t)
+        (python-shell-completion-native-output-timeout
+         python-shell-completion-native-try-output-timeout))
+    (python-shell-completion-native-get-completions
+     (get-buffer-process (current-buffer))
+     nil "_")))
+
+
+;;(setq elpy-interactive-python-command "ipython3 --simple-prompt -i")
 ;; (use-package python
 ;;   :mode ("\\.py\\'" . python-mode)
 ;;   :init
@@ -234,9 +250,6 @@
 ;; with unicode
 (load "emacs-rc-pretty-lambda.el")
 
-;; New in Emacs 24, color theme, loaded at last
-(load-theme 'solarized-dark "NO-CONFIRM")
-
 ;; global variables
 (setq
  inhibit-startup-screen t
@@ -274,3 +287,5 @@
  word-wrap t
  ns-pop-up-frames nil)
 
+;; set themes at last
+(load-theme 'solarized t)
