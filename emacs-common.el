@@ -288,4 +288,4 @@
  ns-pop-up-frames nil)
 
 ;; set themes at last
-(load-theme 'solarized t)
+(load-theme 'solarized-dark t)

@@ -1,8 +1,11 @@
 #!/bin/bash
 
 # This version works with the homebrew build of emacs
-emacs_server="/Applications/Emacs.app/Contents/MacOS/Emacs"
-emacs_client="/usr/local/bin/emacsclient"
+emacs_root="$(brew --prefix emacs)"
+emacs_server_pattern="Emacs.app/Contents/MacOS/Emacs"
+
+emacs_server="${emacs_root}/${emacs_server_pattern}"
+emacs_client="${emacs_root}/bin/emacsclient"
 
 if [[ $# -gt 1 ]]; then
     if [ "$1" == "-batch" ] || [ "$1" == "--batch" ]; then
@@ -12,7 +15,6 @@ if [[ $# -gt 1 ]]; then
     fi
 fi
 
-emacs_server_pattern="Emacs.app/Contents/MacOS/Emacs"
 server_pid=$(ps aux | grep -v grep | grep -Ei "${emacs_server_pattern}" | awk '{print $2}')
 # Check if there is already an emacs process (has to be written like this)
 if [ ! -z "${server_pid}" ]; then
