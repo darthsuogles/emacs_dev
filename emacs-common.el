@@ -162,6 +162,27 @@
 ;;   )
 
 ;;--------------------------------------------------------------------
+;; C++
+(load "cern-root-help.el")
+(require 'root-help)
+(defun root-c++-mode-hook ()
+  "Hook for C++ mode - binding ROOT functions"
+  (define-key c++-mode-map "\C-crc"  'root-class)
+  (define-key c++-mode-map "\C-crh"  'root-header-skel)
+  (define-key c++-mode-map "\C-crs"  'root-source-skel)
+  (define-key c++-mode-map "\C-cri"  'root-include-header)
+  (define-key c++-mode-map "\C-crm"  'root-main)
+  (define-key c++-mode-map "\C-crl"  'root-insert-linkdef)
+  (define-key c++-mode-map "\C-crp"  'root-insert-pragma)
+  (define-key c++-mode-map "\C-crx"  'root-shell)
+  (define-key c++-mode-map "\C-crg"  'root-send-line-to-root)
+  (define-key c++-mode-map "\C-crr"  'root-send-region-to-root)
+  (define-key c++-mode-map "\C-crb"  'root-send-buffer-to-root)
+  (define-key c++-mode-map "\C-crf"  'root-execute-file))
+(add-hook 'c++-mode-hook 'root-c++-mode-hook)
+
+
+;;--------------------------------------------------------------------
 ;; Scala
 (load "scala-custom.el")
 
