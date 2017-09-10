@@ -52,6 +52,7 @@
   '(helm s company magit projectile dash async 
          use-package evil helm-flx swiper-helm
          web-mode ess lua-mode z3-mode
+         markdown-mode
          ensime sbt-mode elpy
          solarized-theme)
   "A list of dependencies to be installed")
@@ -229,7 +230,13 @@
 ;;         :tags-as-categories nil)
 ;;        ))
 
-
+(use-package markdown-mode
+  :ensure t
+  :commands (markdown-mode gfm-mode)
+  :mode (("README\\.md\\'" . gfm-mode)
+         ("\\.md\\'" . markdown-mode)
+         ("\\.markdown\\'" . markdown-mode))
+  :init (setq markdown-command "multimarkdown"))
 
 ;; web-mode @ http://web-mode.org
 (use-package web-mode

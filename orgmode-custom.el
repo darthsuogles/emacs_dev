@@ -91,7 +91,6 @@
 	     '("org-bare-metal"
 	       "\\documentclass{article}[letterpaper,11pt]
                 [NO-DEFAULT-PACKAGES]
-                \\usepackage{qtfd}
                 [PACKAGES]
                 [EXTRA]"
 	       ("\\section{%s}" . "\\section*{%s}")
