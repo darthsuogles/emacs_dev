@@ -24,7 +24,7 @@
 (server-start)
 
 ;;--------------------------------------------------------------------
-;; Package managing 
+;; Package managing
 ;; (eval-when-compile
 ;;   (require 'use-package))
 ;; (require 'diminish)                ;; if you use :diminish
@@ -46,10 +46,10 @@
   (package-install 'use-package)
   (package-install 'async))
 (require 'use-package) ;; get the dependencies
-(dired-async-mode 1) ;; 
+(dired-async-mode 1) ;;
 
 (defvar package-depslist
-  '(helm s company magit projectile dash async 
+  '(helm s company magit projectile dash async
          use-package evil helm-flx swiper-helm
          web-mode ess lua-mode z3-mode
          markdown-mode
@@ -72,7 +72,7 @@
 
 (use-package helm
   :commands helm-config
-  :init (setq 
+  :init (setq
          helm-apropos-fuzzy-match t
          helm-split-window-in-side-p t
          helm-move-to-line-cycle-in-source t
@@ -193,10 +193,10 @@
 (autoload 'torch-mode "lua-mode" "Lua editing mode." t)
 (add-to-list 'auto-mode-alist '("\\.lua$" . torch-mode))
 (add-to-list 'interpreter-mode-alist '("th" . torch-mode))
-;; (setq 
+;; (setq
 ;;  torch-default-application "th"
 ;;  torch-default-command-switches '("-i" "-g" "-a" "torch_repl_init.lua")
-;;  )  
+;;  )
 
 ;; (use-package torch-mode
 ;;   :load-path elisp_path
@@ -204,14 +204,14 @@
 ;;   :mode "\\.lua\\'"
 ;;   :interpreter "th"
 ;;   :init
-;;   (setq 
+;;   (setq
 ;;    torch-default-application "th"
 ;;    torch-default-command-switches '("-i" "-g" "-a" "torch_repl_init.lua")
-;;    )  
+;;    )
 ;;   :bind
 ;;   (:map torch-mode-map
 ;;         ("C-c C-z" . run-torch)
-;;         ("C-c C-c" . torch-send-defun) 
+;;         ("C-c C-c" . torch-send-defun)
 ;;         ("C-c C-l" . torch-send-current-line)
 ;;         ("C-c C-r" . torch-send-region)
 ;;    )
@@ -240,7 +240,7 @@
 
 ;; web-mode @ http://web-mode.org
 (use-package web-mode
-  :mode ("\\.html?\\'" 
+  :mode ("\\.html?\\'"
          "\\.php\\'")
   :init (setq
          web-mode-markup-indent-offset 2
@@ -267,7 +267,7 @@
   (dolist (hook '(text-mode-hook))
     (add-hook hook (lambda () (flyspell-mode 1))))
   (dolist (hook '(change-log-mode-hook log-edit-mode-hook))
-    (add-hook hook (lambda () (flyspell-mode nil)))) 
+    (add-hook hook (lambda () (flyspell-mode nil))))
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -278,6 +278,9 @@
 ;; with unicode
 (load "emacs-rc-pretty-lambda.el")
 
+;; Removing trailing white spaces when saving
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
+
 ;; global variables
 (setq
  inhibit-startup-screen t
@@ -285,7 +288,7 @@
  make-backup-files nil
  column-number-mode t
  scroll-error-top-bottom t
- show-paren-delay 0.5 
+ show-paren-delay 0.5
  sentence-end-double-space nil)
 
 ;; buffer local variables
@@ -298,7 +301,7 @@
 (electric-indent-mode 0)
 
 ;;(tool-bar-mode nil) ;; turning off the tool-bar
-(transient-mark-mode t) 
+(transient-mark-mode t)
 
 ;; All about the meta keys
 (setq mac-option-key-is-meta t)
@@ -308,7 +311,7 @@
 ;;(setq setq mac-command-key-is-meta t)
 ;;(setq mac-command-key 'meta)
 
-(setq 
+(setq
  ring-bell-function 'ignore
  visible-bell nil
  global-visual-line-mode t
