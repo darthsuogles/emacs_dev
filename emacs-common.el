@@ -136,6 +136,7 @@
 (setq elpy-rpc-python-command "python3")  ;; use a default python
 (setq elpy-rpc-backend "jedi")
 (elpy-use-ipython "ipython3")
+(setq elpy-syntax-check-command "pylint")
 (setq python-shell-interpreter "ipython3")
 (setq python-shell-interpreter-args "--simple-prompt --pprint")
 (setq python-shell-prompt-detect-enabled nil)
@@ -254,6 +255,20 @@
 (load (concat elisp_path "/prfgnrl/generic/proof-site.el"))
 ;;(setq auto-mode-alist (cons '("\\.v$" . coq-mode) auto-mode-alist))
 ;; (autoload 'coq-mode "coq" "Major mode for editing Coq vernacular." t)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Flycheck http://www.flycheck.org/en/latest/
+(package-install 'flycheck)
+(global-flycheck-mode)
+
+(package-install 'flycheck-color-mode-line)
+(eval-after-load "flycheck"
+  '(add-hook 'flycheck-mode-hook 'flycheck-color-mode-line-mode))
+
+(package-install 'flycheck-pos-tip)
+(eval-after-load 'flycheck
+  (flycheck-pos-tip-mode))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Flyspell for spell checking
