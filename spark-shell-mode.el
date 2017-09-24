@@ -51,7 +51,7 @@ but customize `scala-default-interpreter' instead.")
   (interactive (list (if current-prefix-arg
                          (read-string "Scala interpreter: " spark-shell-cmd)
                        spark-shell-cmd)))
-  (if (spark-shell-running-p-1) 
+  (if (spark-shell-running-p-1)
       (switch-to-buffer spark-shell-buffer-name)
     (setq spark-shell-cmd cmd-line)
     (let ((cmd/args (split-string cmd-line)))
