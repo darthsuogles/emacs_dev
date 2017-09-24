@@ -1,17 +1,57 @@
 (require 'comint)
 
-(setq cling-binary (concat (getenv "HOME") "/CodeBase/.cling/bin/cling"))
+(defgroup cling-shell
+  nil
+  "Cling, the Modern C++ REPL from CERN"
+  :group 'c++
+  :tag "Cling Shell")
 
-(defun cling (&optional flags)
-  "Move to the buffer containing Cling, or create one if it does not exist. Defaults to C++11"
+(defcustom cling-binary (concat (getenv "HOME") "/CodeBase/.cling/bin/cling")
+  "Location of the cling repl binary used by default."
+  :type 'string
+  :group 'cling-shell)
+
+;; '-std=c++1z' must be the last one, or comint will treat everything after as its params
+(defcustom cling-params "-L folly -L eigen -std=c++1z"
+  "Command line arguments passed to cling repl binary"
+  :type 'string
+  :group 'cling-shell)
+
+(defvar inferior-cling-keymap
+  (let ((kbd-map (current-global-map)))
+    (define-key kbd-map (kbd "C-c C-r") 'cling-send-region)
+    (define-key kbd-map (kbd "C-c C-z") 'cling-shell)
+    (define-key kbd-map (kbd "C-c C-d") 'cling-wrap-defun-and-send)
+    kbd-map))
+
+(defconst cling-shell-process-name "inferior-cling")
+(defconst cling-shell-buffer-name (format "*%s*" cling-shell-process-name))
+
+;;;###autoload
+(defun cling-shell-running-p-1 ()
+  ;; True iff a cling shell is currently running in a buffer.
+  (comint-check-proc cling-shell-buffer-name))
+
+;;;###autoload
+(defun cling-shell-check-running ()
+  ;; True iff a cling shell is currently running in a buffer.
+  (unless (cling-shell-running-p-1)
+    (error "cling c++ shell not running")))
+
+;;;###autoload
+(defun cling-shell (&optional flags)
+  "Move to the buffer containing Cling, or create one if it does not exist.
+Defaults to using the argument provided in cling-params."
   (interactive)
-  (let ((flags (or flags "-std=c++14")))
-    (make-comint "inferior-cling" cling-binary nil flags)
-    (pop-to-buffer "*inferior-cling*")))
+  (if (cling-shell-running-p-1)
+      (switch-to-buffer cling-shell-buffer-name)
+    (let ((flags (or flags cling-params)))
+      (make-comint cling-shell-process-name cling-binary nil flags)
+      (pop-to-buffer cling-shell-buffer-name))))
 
 (defun cling-send-string (string &optional process)
   "Send a string terminated with a newline to the inferior-cling buffer. Has the effect of executing a command"
-  (let ((process (or process (get-process "inferior-cling"))))
+  (let ((process (or process (get-process cling-shell-process-name))))
     (comint-send-string process string)
     (comint-send-string process "\n")))
 
@@ -27,7 +67,7 @@
 
 (defun cling-wrap-raw (string)
   "Wraps `string` in \".rawInput\", which tells Cling to accept function definitions"
-  (format ".rawInput\n%s\n.rawInput" string))
+  (format ".rawInput 1\n%s\n.rawInput 0" string))
 
 (defun cling-wrap-region-and-send (start end)
   "Sends the region between start and end (currently selected when called interactively) to cling in raw input mode "
@@ -61,17 +101,10 @@
     (undo)));;;this is a rather leaky way of doing temporary changes. there should be some way to save buffer contents or something
 ;;;probably uses with-temp-buffer
 
-(defvar inferior-cling-keymap
-  (let ((map (current-global-map)))
-    (define-key map (kbd "C-c r") 'cling-send-region)
-    (define-key map (kbd "C-c d") 'cling-wrap-defun-and-send)
-    map))
-
 (define-minor-mode inferior-cling-mode
   "Toggle inferior-cling-mode. Interactively w/o arguments, this command toggles the mode. A positive prefix argument enables it, and any other prefix argument disables it.
 
 When inferior-cling-mode is enabled, we rebind keys to facilitate working with cling."
   :keymap inferior-cling-keymap)
-
 
 (provide 'cling-mode)

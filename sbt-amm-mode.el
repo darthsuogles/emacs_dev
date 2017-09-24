@@ -51,7 +51,7 @@ but customize `scala-default-interpreter' instead.")
   (interactive (list (if current-prefix-arg
                          (read-string "Scala interpreter: " amm-shell-cmd)
                        amm-shell-cmd)))
-  (if (amm-shell-running-p-1) 
+  (if (amm-shell-running-p-1)
       (switch-to-buffer amm-shell-buffer-name)
     (setq amm-shell-cmd cmd-line)
     (let ((cmd/args (split-string cmd-line)))

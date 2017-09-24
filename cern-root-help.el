@@ -18,8 +18,8 @@
 ;;
 ;;  You should have received a copy of the GNU General Public License
 ;;  along with this program; if not, write to the Free Software
-;;  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
-;;  02111-1307 USA
+;;  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+;;  02110-1301, USA
 ;;
 ;; Author: Christian Holm Christensen <cholm@nbi.dk>
 ;; Maintainer: Christian Holm Christensen <cholm@nbi.dk>
@@ -249,7 +249,7 @@
 (defcustom root-include-directory 
   (if (getenv "ROOTSYS") 
       (concat (getenv "ROOTSYS") "/include")
-    "/usr/local/Cellar/root/5.34.36_2/include/root")
+    "/usr/local/Cellar/root/6.10.04/include/root")
   "Where the ROOT headers reside"
   :group 'root)
 
@@ -257,7 +257,7 @@
 (defcustom root-executable
   (if (getenv "ROOTSYS") 
       (concat (getenv "ROOTSYS") "/bin/root.exe")
-    "/usr/local/Cellar/root/5.34.36_2/bin/root.exe")
+    "/usr/local/Cellar/root/6.10.04/bin/root.exe")
   "Full path to the ROOT interactive executable"
   :group 'root)
 
