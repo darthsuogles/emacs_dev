@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -ex
+set -eux
 
 # This version works with the homebrew build of emacs
 #emacs_root="$(brew --prefix emacs)"
@@ -12,11 +12,20 @@ emacs_client="/usr/local/bin/emacsclient"
 
 [[ -e "${emacs_server}" ]] && [[ -e "${emacs_client}" ]]
 
+function must_use_emacs_server {
+    for arg in ${@}; do
+        if [[ "$arg" == "-batch" ]] || [[ "$arg" == "--batch" ]]; then
+            echo "TRUE"; return
+        fi
+    done
+    echo "FALSE"
+}
+
 if [[ $# -gt 1 ]]; then
-    if [[ "$1" == "-batch" ]] || [[ "$1" == "--batch" ]]; then
+    if [[ "TRUE" == "$(must_use_emacs_server $@)" ]]; then
 	    echo "Emacs compiler mode with: $@"
 	    $emacs_server "$@"
-	    exit 
+	    exit
     fi
 fi
 
@@ -30,6 +39,6 @@ if [[ ! -z "${server_pid}" ]]; then
     if [[ ${num_frames} -lt 2 ]]; then args=-nc; else args=-n; fi
     exec "${emacs_client}" "${args}" --quiet --no-wait "$@" &
 else
-    echo "Initializing emacs server"    
+    echo "Initializing emacs server"
     exec "${emacs_server}" --no-splash "$@" &
 fi
