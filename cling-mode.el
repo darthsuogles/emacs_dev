@@ -1,3 +1,7 @@
+;;; cling-mode  --- Summary
+;;; Commentary:
+;;;   This mode provides access to the Cling C++ REPL from CERN.
+(require 'cc-mode)
 (require 'comint)
 
 (defgroup cling-shell
@@ -17,12 +21,14 @@
   :type 'string
   :group 'cling-shell)
 
-(defvar inferior-cling-keymap
-  (let ((kbd-map (current-global-map)))
-    (define-key kbd-map (kbd "C-c C-r") 'cling-send-region)
-    (define-key kbd-map (kbd "C-c C-z") 'cling-shell)
-    (define-key kbd-map (kbd "C-c C-d") 'cling-wrap-defun-and-send)
-    kbd-map))
+;; Add key bindings to C++ major mode
+(defun cling-c++-mode-hook ()
+  "Hook for C++ mode - binding cling functions."
+  (define-key c++-mode-map (kbd "C-c C-r") 'cling-send-region)
+  (define-key c++-mode-map (kbd "C-c C-z") 'cling-shell)
+  (define-key c++-mode-map (kbd "C-c C-d") 'cling-wrap-defun-and-send)
+)
+(add-hook 'c++-mode-hook 'cling-c++-mode-hook)
 
 (defconst cling-shell-process-name "inferior-cling")
 (defconst cling-shell-buffer-name (format "*%s*" cling-shell-process-name))
@@ -101,10 +107,11 @@ Defaults to using the argument provided in cling-params."
     (undo)));;;this is a rather leaky way of doing temporary changes. there should be some way to save buffer contents or something
 ;;;probably uses with-temp-buffer
 
-(define-minor-mode inferior-cling-mode
-  "Toggle inferior-cling-mode. Interactively w/o arguments, this command toggles the mode. A positive prefix argument enables it, and any other prefix argument disables it.
+(define-derived-mode cling-mode comint-mode "Cling C++ Shell"
+  "Major mode for interacting with a Cling C++ Shell.
 
-When inferior-cling-mode is enabled, we rebind keys to facilitate working with cling."
-  :keymap inferior-cling-keymap)
+\\{cling-mode-map\\}"
+  (define-key cling-mode-map [(meta return)] 'comint-accumulate))
 
 (provide 'cling-mode)
+;;; cling-mode ends here

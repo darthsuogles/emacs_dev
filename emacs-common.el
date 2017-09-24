@@ -167,7 +167,6 @@
 ;; C++
 (load "cling-mode.el")
 (require 'cling-mode)
-(add-hook 'c++-mode-hook 'cling-mode)
 ;; (load "cern-root-help.el")
 ;; (require 'root-help)
 ;; (defun root-c++-mode-hook ()
