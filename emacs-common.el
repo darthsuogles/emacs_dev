@@ -134,13 +134,20 @@
 ;; Python
 (elpy-enable)
 (setq elpy-rpc-python-command "python3")  ;; use a default python
-(setq elpy-rpc-backend "jedi")
+;; (setq elpy-rpc-backend "jedi") ;; please don't use jedi
 (elpy-use-ipython "ipython3")
 (setq elpy-syntax-check-command "pylint")
 (setq python-shell-interpreter "ipython3")
 (setq python-shell-interpreter-args "--simple-prompt --pprint")
 (setq python-shell-prompt-detect-enabled nil)
 (setq python-shell-prompt-detect-failure-warning nil)
+(setq python-check-command "pylint")
+(setq elpy-modules '(elpy-module-sane-defaults
+                     elpy-module-company
+                     elpy-module-eldoc
+                     elpy-module-highlight-indentation
+                     elpy-module-yasnippet))
+
 
 ;; https://github.com/emacs-mirror/emacs/commit/dbb341022870ecad4c9177485a6770a355633cc0
 (defun python-shell-completion-native-try ()
@@ -171,15 +178,6 @@
 ;; (require 'root-help)
 ;; (defun root-c++-mode-hook ()
 ;;   "Hook for C++ mode - binding ROOT functions"
-;;   ;; (define-key c++-mode-map "\C-crc"  'root-class)
-;;   ;; (define-key c++-mode-map "\C-crh"  'root-header-skel)
-;;   ;; (define-key c++-mode-map "\C-crs"  'root-source-skel)
-;;   ;; (define-key c++-mode-map "\C-cri"  'root-include-header)
-;;   ;; (define-key c++-mode-map "\C-crm"  'root-main)
-;;   ;; (define-key c++-mode-map "\C-crl"  'root-insert-linkdef)
-;;   ;; (define-key c++-mode-map "\C-crp"  'root-insert-pragma)
-;;   ;; (define-key c++-mode-map "\C-crx"  'root-shell)
-;;   ;;(define-key c++-mode-map "\C-cl"  'root-send-line-to-root)
 ;;   (define-key c++-mode-map "\C-cr"  'root-send-region-to-root)
 ;;   (define-key c++-mode-map "\C-cb"  'root-send-buffer-to-root)
 ;;   ;;(define-key c++-mode-map "\C-crf"  'root-execute-file)
@@ -317,7 +315,7 @@
 ;; modes
 (electric-indent-mode 0)
 
-;;(tool-bar-mode nil) ;; turning off the tool-bar
+(tool-bar-mode nil) ;; turning off the tool-bar
 (transient-mark-mode t)
 
 ;; All about the meta keys
