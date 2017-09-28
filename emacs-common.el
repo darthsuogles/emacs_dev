@@ -148,6 +148,26 @@
                      elpy-module-highlight-indentation
                      elpy-module-yasnippet))
 
+;; FROM: https://github.com/jorgenschaefer/elpy/wiki/Customizations
+;; You may sometimes find when you try to navigate to a function/class definition with
+;; `elpy-goto-definition` (M-.), that instead of jumping to the definition, you get the
+;; message "No definition found". If you see this error often (because of the nature of
+;; the code you work on), you can use the following function instead of/in addition to
+;; `elpy-goto-definition`:
+(defun elpy-goto-definition-or-rgrep ()
+  "Go to the definition of the symbol at point, if found. Otherwise, run `elpy-rgrep-symbol'."
+  (interactive)
+  (ring-insert find-tag-marker-ring (point-marker))
+  (condition-case nil (elpy-goto-definition)
+    (error (elpy-rgrep-symbol
+            (concat "\\(def\\|class\\)\s" (thing-at-point 'symbol) "(")))))
+
+;; This function will try to find the definition of the symbol at point using elpy-goto-definition,
+;; but will do elpy-rgrep-symbol instead, if the former function fails to return a result. You can
+;; bind this function to the key combination of your choice, or you can bind it to M-. to use it as
+;; a replacement for the the default goto-definition function:
+;; (define-key elpy-mode-map (kbd "M-.") 'elpy-goto-definition-or-rgrep)
+
 
 ;; https://github.com/emacs-mirror/emacs/commit/dbb341022870ecad4c9177485a6770a355633cc0
 (defun python-shell-completion-native-try ()
