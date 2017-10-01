@@ -51,7 +51,7 @@
 (defvar package-depslist
   '(helm s company magit projectile dash async
          use-package evil helm-flx swiper-helm
-         web-mode ess lua-mode z3-mode
+         web-mode tuareg utop ess lua-mode z3-mode
          markdown-mode
          ensime sbt-mode elpy
          solarized-theme)
@@ -101,6 +101,9 @@
   (add-hook 'after-init-hook 'global-company-mode)
   ;;(add-hook 'after-init-hook 'company-statistics-mode t)
   )
+
+;; Enable prettify symbols (Emacs 24.4+)
+(global-prettify-symbols-mode +1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;--------------------------------------------------------------------
@@ -179,35 +182,37 @@
      (get-buffer-process (current-buffer))
      nil "_")))
 
-
-;;(setq elpy-interactive-python-command "ipython3 --simple-prompt -i")
-;; (use-package python
-;;   :mode ("\\.py\\'" . python-mode)
-;;   :init
-;;   (setq
-;;    python-shell-interpreter "ipython3"
-;;    python-shell-interpreter-args "--simple-prompt -i"
-;;    )
-;;   )
-
 ;;--------------------------------------------------------------------
 ;; C++
 (load "cling-mode.el")
 (require 'cling-mode)
-;; (load "cern-root-help.el")
-;; (require 'root-help)
-;; (defun root-c++-mode-hook ()
-;;   "Hook for C++ mode - binding ROOT functions"
-;;   (define-key c++-mode-map "\C-cr"  'root-send-region-to-root)
-;;   (define-key c++-mode-map "\C-cb"  'root-send-buffer-to-root)
-;;   ;;(define-key c++-mode-map "\C-crf"  'root-execute-file)
-;;   )
-;; (add-hook 'c++-mode-hook 'root-c++-mode-hook)
-
 
 ;;--------------------------------------------------------------------
 ;; Scala
 (load "scala-custom.el")
+
+;;--------------------------------------------------------------------
+;; OCaml
+(add-to-list 'auto-mode-alist '("\\.re$" . tuareg-mode))
+(autoload 'utop "utop" "Toplevel for OCaml" t)
+(setq utop-command "opam config exec -- utop -emacs")
+(autoload 'utop-minor-mode "utop" "Minor mode for utop" t)
+(add-hook 'tuareg-mode-hook 'utop-minor-mode)
+;; (add-hook 'tuareg-mode-hook
+;;           (lambda() "Prettify symbols"
+;;             (when (functionp 'prettify-symbols-mode)
+;;               (prettify-symbols-mode))))
+(add-hook 'tuareg-mode-hook
+          (lambda() "Hook for key-bindings of ocam/utop functions."
+            (define-key tuareg-mode-map (kbd "C-c C-r") 'utop-eval-region)
+            (define-key tuareg-mode-map (kbd "C-c C-z") 'utop)
+            (define-key tuareg-mode-map (kbd "C-c C-d") 'utop-eval-buffer)))
+
+;;--------------------------------------------------------------------
+;; Coq
+(load (concat elisp_path "/prfgnrl/generic/proof-site.el"))
+;;(setq auto-mode-alist (cons '("\\.v$" . coq-mode) auto-mode-alist))
+;; (autoload 'coq-mode "coq" "Major mode for editing Coq vernacular." t)
 
 ;;--------------------------------------------------------------------
 ;; Lua / Torch7
@@ -243,15 +248,8 @@
 ;; org-mode (site-lisp is the install location)
 (load "orgmode-custom.el")
 
-;;(require 'org2blog-autoloads)
-;;(setq org2blog/wp-blog-alist
-;;      '(("quantipress"
-;;         :url "http://wordpress.quantifind.com/xmlrpc.php"
-;;        :username "philip"
-;;         :default-categories ("data-science" "emacs")
-;;         :tags-as-categories nil)
-;;        ))
-
+;;--------------------------------------------------------------------
+;; Markdown
 (use-package markdown-mode
   :ensure t
   :commands (markdown-mode gfm-mode)
@@ -260,7 +258,8 @@
          ("\\.markdown\\'" . markdown-mode))
   :init (setq markdown-command "multimarkdown"))
 
-;; web-mode @ http://web-mode.org
+;;--------------------------------------------------------------------
+;; HTML/JavaScript/CSS web-mode @ http://web-mode.org
 (use-package web-mode
   :mode ("\\.html?\\'"
          "\\.php\\'")
@@ -271,11 +270,6 @@
          web-mode-indent-style 2)
   :config (setq-default indent-tabs-mode t)
   )
-
-;; Coq
-(load (concat elisp_path "/prfgnrl/generic/proof-site.el"))
-;;(setq auto-mode-alist (cons '("\\.v$" . coq-mode) auto-mode-alist))
-;; (autoload 'coq-mode "coq" "Major mode for editing Coq vernacular." t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Flycheck http://www.flycheck.org/en/latest/
@@ -343,8 +337,6 @@
 (setq mac-command-key-is-meta t)
 (setq mac-command-modifier 'meta)
 (setq mac-option-modifier 'meta)
-;;(setq setq mac-command-key-is-meta t)
-;;(setq mac-command-key 'meta)
 
 (setq
  ring-bell-function 'ignore
