@@ -138,7 +138,7 @@
 (elpy-enable)
 (setq elpy-rpc-python-command "python3")  ;; use a default python
 ;; (setq elpy-rpc-backend "jedi") ;; please don't use jedi
-(elpy-use-ipython "ipython3")
+;;(elpy-use-ipython "ipython3"
 (setq elpy-syntax-check-command "pylint")
 (setq python-shell-interpreter "ipython3")
 (setq python-shell-interpreter-args "--simple-prompt --pprint")
@@ -280,6 +280,9 @@
 (eval-after-load "flycheck"
   '(add-hook 'flycheck-mode-hook 'flycheck-color-mode-line-mode))
 
+(add-hook 'c++-mode-hook (lambda () (setq flycheck-gcc-language-standard "c++1z")))
+(add-hook 'c++-mode-hook (lambda () (setq flycheck-clang-language-standard "c++1z")))
+
 ;; (package-install 'flycheck-pos-tip)
 ;; (eval-after-load 'flycheck (flycheck-pos-tip-mode))
 
@@ -345,5 +348,34 @@
  word-wrap t
  ns-pop-up-frames nil)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; set themes at last
+;; make the fringe stand out from the background
+(setq solarized-distinct-fringe-background t)
+
+;; Don't change the font for some headings and titles
+(setq solarized-use-variable-pitch nil)
+
+;; make the modeline high contrast
+(setq solarized-high-contrast-mode-line t)
+
+;; Use less bolding
+(setq solarized-use-less-bold t)
+
+;; Use more italics
+;; (setq solarized-use-more-italic t)
+
+;; Use less colors for indicators such as git:gutter, flycheck and similar
+(setq solarized-emphasize-indicators nil)
+
+;; Don't change size of org-mode headlines (but keep other size-changes)
+;; (setq solarized-scale-org-headlines nil)
+
+;; Avoid all font-size changes
+(setq solarized-height-minus-1 1.0)
+(setq solarized-height-plus-1 1.0)
+(setq solarized-height-plus-2 1.0)
+(setq solarized-height-plus-3 1.0)
+(setq solarized-height-plus-4 1.0)
+
 (load-theme 'solarized-dark t)

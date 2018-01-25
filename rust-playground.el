@@ -94,6 +94,29 @@ By default confirmation required."
 	(compile (concat rust-playground-bin " " (shell-quote-argument snippet-file) " -o snippet && "
 			 (file-name-directory snippet-file) "snippet"))))
 
+
+(defun get-rust-exec-fname(buffer)
+  (let ((fname (buffer-file-name buffer)))
+    (concat "__" (file-name-base buffer-file-name) ".rx")
+  ))
+
+(defun rust-compile-finish-hook(buffer, msg)
+  (let ((buffer-exec-fname (get-rust-exec-fname buffer)))
+    (concat "echo '================ Rust =================' && "
+            (concat (file-name-directory (buffer-file-name buffer)) buffer-exec-fname) " && "
+            "echo '================ Done ================='")))
+
+(defun rust-exec-buffer()
+  "Run code in current buffer"
+  (interactive)
+  (make-local-variable 'compile-command)
+  (let ((buffer-exec-fname (get-rust-exec-fname (current-buffer))))
+    (compile (concat rust-playground-bin " " buffer-file-name " -o " buffer-exec-fname " && \\\n"
+                     "echo '================ Rust =================' && \\\n"
+                     (concat (file-name-directory buffer-file-name) buffer-exec-fname) " && \\\n"
+                     "echo '================ Done =================' \n\n"))))
+
+
 ;;;###autoload
 (defun rust-playground ()
   "Run playground for Rust language in a new buffer."
