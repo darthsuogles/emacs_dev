@@ -1,10 +1,15 @@
 #!/bin/bash
 
+# We cannot set `pipefail` it won't launch the server
 set -eux
 
 # This version works with the homebrew build of emacs
-#emacs_root="$(brew --prefix emacs)"
-emacs_root="/Applications"
+
+# Uncomment to toggle the native brew version
+emacs_root="$(brew --prefix emacs)"
+# Uncomment to toggle the `cask` version
+#emacs_root="/Applications"
+
 emacs_server_pattern="Emacs.app/Contents/MacOS/Emacs"
 
 emacs_server="${emacs_root}/${emacs_server_pattern}"
@@ -36,9 +41,17 @@ if [[ ! -z "${server_pid}" ]]; then
 	    osascript -e 'tell application "Emacs" to activate'
     # Get the number of all frames
     num_frames="$(${emacs_client} -e '(length (frame-list))')"
-    if [[ ${num_frames} -lt 2 ]]; then args=-nc; else args=-n; fi
+    if [[ ${num_frames} -lt 2 ]]; then
+        # Create a new frame if we only have the minimized server frame
+        args=-nc
+    else
+        # Just launch on the existing frame window
+        args=-n
+    fi
     exec "${emacs_client}" "${args}" --quiet --no-wait "$@" &
 else
     echo "Initializing emacs server"
-    exec "${emacs_server}" --no-splash "$@" &
+    # The option "--no-splash" has disappeared.
+    #exec "${emacs_server}" --no-splash "$@" &
+    exec "${emacs_server}" --quiet "$@" &
 fi
