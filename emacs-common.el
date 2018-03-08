@@ -146,8 +146,8 @@
 (setq python-shell-prompt-detect-failure-warning nil)
 (setq python-check-command "pylint")
 (setq elpy-modules '(elpy-module-sane-defaults
-                     elpy-module-company
-                     elpy-module-eldoc
+                     ;;elpy-module-company
+                     ;;elpy-module-eldoc
                      elpy-module-highlight-indentation
                      elpy-module-yasnippet))
 
