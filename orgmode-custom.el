@@ -128,6 +128,5 @@
 
 ;;--------------------------------------------------------------------
 (setq org-todo-keywords
-      '((sequence "TODO" "SKIMMED" "2e-PASS" "|" "DONE" "SKIP")
+      '((sequence "TODO" "SKIMMED" "2e-PASS" "|" "DISTILL" "SALVAGE" "DONE" "SKIP")
 	(sequence "|" "CANCELED(c)")))
-

@@ -140,8 +140,10 @@
 ;; (setq elpy-rpc-backend "jedi") ;; please don't use jedi
 ;;(elpy-use-ipython "ipython3"
 (setq elpy-syntax-check-command "pylint")
-(setq python-shell-interpreter "ipython3")
-(setq python-shell-interpreter-args "--simple-prompt --pprint")
+;; (setq python-shell-interpreter "ipython3")
+;; (setq python-shell-interpreter-args "--simple-prompt --pprint")
+(setq python-shell-interpreter "jupyter"
+      python-shell-interpreter-args "console --simple-prompt")
 (setq python-shell-prompt-detect-enabled nil)
 (setq python-shell-prompt-detect-failure-warning nil)
 (setq python-check-command "pylint")
