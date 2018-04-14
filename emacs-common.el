@@ -140,6 +140,7 @@
 ;; (setq elpy-rpc-backend "jedi") ;; please don't use jedi
 ;;(elpy-use-ipython "ipython3"
 (setq elpy-syntax-check-command "pylint")
+;; Now jupyter console is the default recommendation, deprecating ipython3
 ;; (setq python-shell-interpreter "ipython3")
 ;; (setq python-shell-interpreter-args "--simple-prompt --pprint")
 (setq python-shell-interpreter "jupyter"
