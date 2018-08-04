@@ -43,7 +43,7 @@
          (R . t)
          (python . t)
          (scala . t)
-         (sh . t)
+         ;; (sh . t)
          (org . t)
          (latex . t))))
 

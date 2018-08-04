@@ -37,7 +37,6 @@
  package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
                     ("org" . "http://orgmode.org/elpa/")
                     ("melpa" . "http://melpa.org/packages/")
-                    ("milkbox" . "http://melpa.milkbox.net/packages/")
                     ("elpy" . "http://jorgenschaefer.github.io/packages/")))
 
 (package-initialize)

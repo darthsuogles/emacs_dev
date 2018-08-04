@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # We cannot set `pipefail` it won't launch the server
-set -eux
+set -ex
 
 # This version works with the homebrew build of emacs
 
@@ -29,14 +29,14 @@ function must_use_emacs_server {
 if [[ $# -gt 1 ]]; then
     if [[ "TRUE" == "$(must_use_emacs_server $@)" ]]; then
 	    echo "Emacs compiler mode with: $@"
-	    $emacs_server "$@"
-	    exit
+	    exec "${emacs_server}" "$@"
+	    exit 0
     fi
 fi
 
 server_pid="$(ps aux | grep -v grep | grep -Ei "${emacs_server_pattern}" | awk '{print $2}')"
 # Check if there is already an emacs process (has to be written like this)
-if [[ ! -z "${server_pid}" ]]; then
+if [[ ! -z "${server_pid:-}" ]]; then
     which osascript > /dev/null 2>&1 && \
 	    osascript -e 'tell application "Emacs" to activate'
     # Get the number of all frames
