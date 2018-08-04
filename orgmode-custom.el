@@ -1,4 +1,5 @@
 ;; org-mode
+;;; Code:
 (add-to-list 'load-path (concat elisp_path "/org-mode/lisp"))
 (add-to-list 'load-path (concat elisp_path "/org-mode/contrib/lisp"))
 
@@ -26,7 +27,9 @@
 
 ;;(require 'ox-bibtex)
 (require 'ox-beamer)
-(require 'ox-md)
+;;(require 'ox-md)
+;;(require 'ox-deck)
+(require 'ox-confluence)
 
 ;; Bibliography: org-bibnote-exp
 (require 'org-bibnote-exp)
@@ -47,32 +50,32 @@
          (org . t)
          (latex . t))))
 
-					; Do not prompt to confirm evaluation
-					; This may be dangerous - make sure you understand the consequences
-					; of setting this -- see the docstring for details
+                                        ; Do not prompt to confirm evaluation
+                                        ; This may be dangerous - make sure you understand the consequences
+                                        ; of setting this -- see the docstring for details
 (setq org-confirm-babel-evaluate nil)
 
 (defun org-insert-src-block (src-code-type)
   "Insert a `SRC-CODE-TYPE` type source code block in org-mode"
   (interactive
    (let ((src-code-types '("emacs-lisp" "python" "C" "sh" "js" "C++" "css"
-			   "dot" "matlab" "sql" "ditaa" "haskell" "latex"
-			   "scala" "ocaml" "org" "perl" "ruby")))
+			               "dot" "matlab" "sql" "ditaa" "haskell" "latex"
+			               "scala" "ocaml" "org" "perl" "ruby")))
      (list (ido-completing-read "Source code type: " src-code-types))))
-   (progn
-     (newline-and-indent)
-     (insert (format "#+BEGIN_SRC %s\n" src-code-type))
-     (newline-and-indent)
-     (insert "#+END_SRC\n")
-     (previous-line 2)
-     (org-edit-src-code)))
+  (progn
+    (newline-and-indent)
+    (insert (format "#+BEGIN_SRC %s\n" src-code-type))
+    (newline-and-indent)
+    (insert "#+END_SRC\n")
+    (previous-line 2)
+    (org-edit-src-code)))
 
 ;; http://wenshanren.org/?p=334
 (add-hook 'org-mode-hook '(lambda ()
-			    ;; turn on flyspell-mode by default
-			    (flyspell-mode 1)
-			    ;; key-bindings for inserting code blocks
-			    (local-set-key (kbd "C-c s i") 'org-insert-src-block) ))
+			                ;; turn on flyspell-mode by default
+			                (flyspell-mode 1)
+			                ;; key-bindings for inserting code blocks
+			                (local-set-key (kbd "C-c s i") 'org-insert-src-block) ))
 (setq org-src-fontify-natively t) ;; syntax highlighting in the source block
 
 ;;--------------------------------------------------------------------
@@ -83,50 +86,50 @@
 (add-to-list 'org-latex-packages-alist '("" "xcolor"))
 (setq org-latex-minted-options
       '(
-	;;("bgcolor" "LightGray")
-	("frame" "lines")
-	))
+	    ;;("bgcolor" "LightGray")
+	    ("frame" "lines")
+	    ))
 
 (add-to-list 'org-latex-classes
-	     '("org-bare-metal"
-	       "\\documentclass{article}[letterpaper,11pt]
+	         '("org-bare-metal"
+	           "\\documentclass{article}[letterpaper,11pt]
                 [NO-DEFAULT-PACKAGES]
                 [PACKAGES]
                 [EXTRA]"
-	       ("\\section{%s}" . "\\section*{%s}")
-	       ("\\subsection{%s}" . "\\subsection*{%s}")
-	       ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-	       ("\\paragraph{%s}" . "\\paragraph*{%s}")
-	       ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+	           ("\\section{%s}" . "\\section*{%s}")
+	           ("\\subsection{%s}" . "\\subsection*{%s}")
+	           ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+	           ("\\paragraph{%s}" . "\\paragraph*{%s}")
+	           ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 
 
 (add-to-list 'org-latex-classes
-	     '("llncs"
-	       "\\documentclass{llncs}
+	         '("llncs"
+	           "\\documentclass{llncs}
                 [NO-DEFAULT-PACKAGES]
                 \\usepackage{computastica}
                 [PACKAGES]
                 [EXTRA]"
-	       ("\\section{%s}" . "\\section*{%s}")
-	       ("\\subsection{%s}" . "\\subsection*{%s}")
-	       ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-	       ("\\paragraph{%s}" . "\\paragraph*{%s}")
-	       ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+	           ("\\section{%s}" . "\\section*{%s}")
+	           ("\\subsection{%s}" . "\\subsection*{%s}")
+	           ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+	           ("\\paragraph{%s}" . "\\paragraph*{%s}")
+	           ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 
 ;; VLDB mode, kinda tricky
 (add-to-list 'org-latex-classes
-	     '("vldb"
-	       "\\documentclass{vldb}
+	         '("vldb"
+	           "\\documentclass{vldb}
                 [NO-DEFAULT-PACKAGES]
                 [PACKAGES]
                 [EXTRA]"
-	       ("\\section{%s}" . "\\section*{%s}")
-	       ("\\subsection{%s}" . "\\subsection*{%s}")
-	       ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-	       ("\\paragraph{%s}" . "\\paragraph*{%s}")
-	       ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+	           ("\\section{%s}" . "\\section*{%s}")
+	           ("\\subsection{%s}" . "\\subsection*{%s}")
+	           ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+	           ("\\paragraph{%s}" . "\\paragraph*{%s}")
+	           ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 
 ;;--------------------------------------------------------------------
 (setq org-todo-keywords
       '((sequence "TODO" "SKIMMED" "2e-PASS" "|" "DISTILL" "SALVAGE" "DONE" "SKIP")
-	(sequence "|" "CANCELED(c)")))
+	    (sequence "|" "CANCELED(c)")))
