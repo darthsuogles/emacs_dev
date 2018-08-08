@@ -251,6 +251,11 @@
 (load "orgmode-custom.el")
 
 ;;--------------------------------------------------------------------
+;; BazelBuild
+(require 'bazel-mode)
+(add-hook 'bazel-mode-hook (lambda () (add-hook 'before-save-hook #'bazel-format nil t)))
+
+;;--------------------------------------------------------------------
 ;; Markdown
 (use-package markdown-mode
   :ensure t

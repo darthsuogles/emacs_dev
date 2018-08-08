@@ -30,6 +30,7 @@
 ;;(require 'ox-md)
 ;;(require 'ox-deck)
 (require 'ox-confluence)
+(require 'ob-rust)
 
 ;; Bibliography: org-bibnote-exp
 (require 'org-bibnote-exp)
@@ -45,8 +46,11 @@
          (ditaa . t)
          (R . t)
          (python . t)
+         (rust . t)
          (scala . t)
-         ;; (sh . t)
+         (C . t)
+         (shell . t)
+         (stan . t)
          (org . t)
          (latex . t))))
 
@@ -58,7 +62,8 @@
 (defun org-insert-src-block (src-code-type)
   "Insert a `SRC-CODE-TYPE` type source code block in org-mode"
   (interactive
-   (let ((src-code-types '("emacs-lisp" "python" "C" "sh" "js" "C++" "css"
+   (let ((src-code-types '("emacs-lisp" "python" "C" "sh" "js"  "css"
+                           "rust" "C++"
 			               "dot" "matlab" "sql" "ditaa" "haskell" "latex"
 			               "scala" "ocaml" "org" "perl" "ruby")))
      (list (ido-completing-read "Source code type: " src-code-types))))
