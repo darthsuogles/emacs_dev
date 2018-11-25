@@ -27,7 +27,7 @@
   (define-key c++-mode-map (kbd "C-c C-r") 'cling-send-region)
   (define-key c++-mode-map (kbd "C-c C-z") 'cling-shell)
   (define-key c++-mode-map (kbd "C-c C-d") 'cling-wrap-defun-and-send)
-)
+  )
 (add-hook 'c++-mode-hook 'cling-c++-mode-hook)
 
 (defconst cling-shell-process-name "inferior-cling")
@@ -93,7 +93,7 @@ Defaults to using the argument provided in cling-params."
   (push-mark (point))
   (re-search-forward "{")
   (save-excursion
-   (flatten-function-def))
+    (flatten-function-def))
   (backward-char)
   (forward-sexp))
 

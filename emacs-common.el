@@ -188,6 +188,25 @@
 ;; C++
 (load "cling-mode.el")
 (require 'cling-mode)
+(require 'clang-format)
+
+(setq-default c-basic-offset 2)
+(with-eval-after-load 'cc-mode
+  (fset 'c-indent-region 'clang-format-region)
+  (setq c-basic-offset 2
+        tab-width 2
+        indent-tabs-mode nil)
+  (bind-keys :map c-mode-base-map
+             ("C-M-\\" . clang-format-region)
+  ))
+
+;;--------------------------------------------------------------------
+;; Go
+(add-hook 'go-mode-hook
+          (lambda ()
+            (add-hook 'before-save-hook 'gofmt-before-save)
+            (setq tab-width 4)
+            (setq indent-tabs-mode 1)))
 
 ;;--------------------------------------------------------------------
 ;; Scala
@@ -329,12 +348,6 @@
  scroll-error-top-bottom t
  show-paren-delay 0.5
  sentence-end-double-space nil)
-
-;; buffer local variables
-(setq-default
- indent-tabs-mode nil
- tab-width 4
- c-basic-offset 4)
 
 ;; modes
 (electric-indent-mode 0)
