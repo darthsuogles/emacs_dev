@@ -1,17 +1,11 @@
 #!/bin/bash
 
 # We cannot set `pipefail` it won't launch the server
-set -ex
+set -eu -o pipefail
 
 # This version works with the homebrew build of emacs
-
-# Uncomment to toggle the native brew version
-emacs_root="$(brew --prefix emacs)"
-# Uncomment to toggle the `cask` version
-#emacs_root="/Applications"
-
+emacs_root="/Applications"
 emacs_server_pattern="Emacs.app/Contents/MacOS/Emacs"
-
 emacs_server="${emacs_root}/${emacs_server_pattern}"
 emacs_client="/usr/local/bin/emacsclient"
 
@@ -28,9 +22,9 @@ function must_use_emacs_server {
 
 if [[ $# -gt 1 ]]; then
     if [[ "TRUE" == "$(must_use_emacs_server $@)" ]]; then
-	    echo "Emacs compiler mode with: $@"
-	    exec "${emacs_server}" "$@"
-	    exit 0
+	echo "Emacs compiler mode with: $@"
+	exec "${emacs_server}" "$@"
+	exit 0
     fi
 fi
 
@@ -38,7 +32,7 @@ server_pid="$(ps aux | grep -v grep | grep -Ei "${emacs_server_pattern}" | awk '
 # Check if there is already an emacs process (has to be written like this)
 if [[ ! -z "${server_pid:-}" ]]; then
     which osascript > /dev/null 2>&1 && \
-	    osascript -e 'tell application "Emacs" to activate'
+	osascript -e 'tell application "Emacs" to activate'
     # Get the number of all frames
     num_frames="$(${emacs_client} -e '(length (frame-list))')"
     if [[ ${num_frames} -lt 2 ]]; then
@@ -51,7 +45,5 @@ if [[ ! -z "${server_pid:-}" ]]; then
     exec "${emacs_client}" "${args}" --quiet --no-wait "$@" &
 else
     echo "Initializing emacs server"
-    # The option "--no-splash" has disappeared.
-    #exec "${emacs_server}" --no-splash "$@" &
-    exec "${emacs_server}" --quiet "$@" &
+    exec "${emacs_server}" --daemon
 fi

@@ -135,18 +135,11 @@
 ;;--------------------------------------------------------------------
 ;; Python
 (elpy-enable)
-(setq elpy-rpc-python-command "python3")  ;; use a default python
-;; (setq elpy-rpc-backend "jedi") ;; please don't use jedi
-;;(elpy-use-ipython "ipython3"
-(setq elpy-syntax-check-command "pylint")
-;; Now jupyter console is the default recommendation, deprecating ipython3
-;; (setq python-shell-interpreter "ipython3")
-;; (setq python-shell-interpreter-args "--simple-prompt --pprint")
-(setq python-shell-interpreter "jupyter"
-      python-shell-interpreter-args "console --simple-prompt")
-(setq python-shell-prompt-detect-enabled nil)
-(setq python-shell-prompt-detect-failure-warning nil)
-(setq python-check-command "pylint")
+;; (setq python-shell-interpreter "jupyter"
+;;       python-shell-interpreter-args "console --simple-prompt"
+;;       python-shell-prompt-detect-failure-warning nil)
+;; (add-to-list 'python-shell-completion-native-disabled-interpreters
+;;              "jupyter")
 (setq elpy-modules '(elpy-module-sane-defaults
                      elpy-module-company
                      elpy-module-eldoc
@@ -269,6 +262,31 @@
 ;; org-mode (site-lisp is the install location)
 (load "orgmode-custom.el")
 
+;; Magit
+(require 'subr-x)
+(require 'magit-popup)
+
+(defun magit-arcanist--do-diff ()
+  ;; Perform arcanist operations
+  (interactive)
+  (let ((repo-root (magit-toplevel))
+	(curr-fname (buffer-file-name))
+	)
+    (message
+     (concat "https://github.com/darthsuogles/emacs_dev/" (string-remove-prefix repo-root curr-fname)))
+    )
+  )
+
+(magit-define-popup magit-arcanist-diff-popup
+  "Popup console for Arcanist diff commands."
+  :switches '((?l "No lint" "--nolint")
+              (?u "No unit tests" "--nounit")
+              (?c "No coverage info" "--no-coverage"))
+  :actions '((?d "Diff" magit-arcanist--do-diff)))
+
+
+
+
 ;;--------------------------------------------------------------------
 ;; BazelBuild
 (require 'bazel-mode)
@@ -308,6 +326,24 @@
 
 (add-hook 'c++-mode-hook (lambda () (setq flycheck-gcc-language-standard "c++1z")))
 (add-hook 'c++-mode-hook (lambda () (setq flycheck-clang-language-standard "c++1z")))
+
+;; Configure include paths
+(setq spack-root (expand-file-name "~/CodeBase/spack/opt/spack/darwin-mojave-x86_64/clang-10.0.1-apple"))
+
+(defun spack-pkg-include(pkg_digest &optional include_prefix)
+  (let ((inc-path (if include_prefix include_prefix "include")))
+        (concat spack-root "/" pkg_digest "/" inc-path)
+    )
+  )
+
+(add-hook 'c++mode-hook (lambda () (setq flycheck-clang-include-path
+                                    (list
+                                     (spack-pkg-include "boost-1.70.0-kl27accx4oo6wouath344kvgytgp2fkf")
+                                     (spack-pkg-include "eigen-3.3.7-bd2r4aqrkox7dpebj2r3gqvgpqzwuh7x"
+                                                        "include/eigen3")
+                                     )
+                                    )
+                          ))
 
 ;; (package-install 'flycheck-pos-tip)
 ;; (eval-after-load 'flycheck (flycheck-pos-tip-mode))
@@ -367,6 +403,8 @@
  global-visual-line-mode t
  word-wrap t
  ns-pop-up-frames nil)
+
+(setq-default indent-tabs-mode nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; set themes at last

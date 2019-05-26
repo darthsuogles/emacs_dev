@@ -27,7 +27,7 @@
 
 ;;(require 'ox-bibtex)
 (require 'ox-beamer)
-;;(require 'ox-md)
+(require 'ox-md)
 ;;(require 'ox-deck)
 (require 'ox-confluence)
 (require 'ob-rust)
@@ -82,6 +82,52 @@
 			                ;; key-bindings for inserting code blocks
 			                (local-set-key (kbd "C-c s i") 'org-insert-src-block) ))
 (setq org-src-fontify-natively t) ;; syntax highlighting in the source block
+
+;;----
+;; Export sections to separate files
+
+;; export headlines to separate files
+;; http://emacs.stackexchange.com/questions/2259/how-to-export-top-level-headings-of-org-mode-buffer-to-separate-files
+(defun org-export-subtrees-to-markdown()
+  "Export all subtrees that are *not* tagged with :noexport: to separate files."
+  (interactive)
+  (save-buffer)
+  (let ((backup-is-buffer-modified (buffer-modified-p)))
+    (save-excursion
+      (goto-char (point-min))
+      (goto-char (re-search-forward "^*"))
+      (set-mark (line-beginning-position))
+      (goto-char (point-max))
+      (org-map-entries
+       (lambda ()
+         (let ((maybe-export-fname-prop (org-entry-get (point) "EXPORT_FILE_NAME"))
+               (subtree-title (nth 4 (org-heading-components))))
+           (deactivate-mark)
+           ;; Execute the actual export command
+           (when maybe-export-fname-prop
+             (message (format "[AUTO] Export [%s] to [%s]" subtree-title maybe-export-fname-prop))
+             (org-md-export-to-markdown nil t nil))
+           (set-buffer-modified-p backup-is-buffer-modified)))
+       "-noexport"  ;; MATCH
+       'region-start-level  ;; SCOPE
+       ))))
+
+(defun org-export-all-exportable-subtrees()
+  "Export any subtree with the property entry EXPORT_FILE_NAME set."
+  (org-map-entries
+   (lambda ()
+     (let ((maybe-export-fname-prop (org-entry-get (point) "EXPORT_FILE_NAME"))
+           (subtree-title (nth 4 (org-heading-components))))
+       (deactivate-mark)
+       ;; Execute the actual export command
+       (when maybe-export-fname-prop
+         (message (format "[AUTO] Export [%s] to [%s]" subtree-title maybe-export-fname-prop))
+         (org-md-export-to-markdown nil t nil))
+       ))
+   "-noexport"  ;; MATCH
+   'file  ;; SCOPE
+   ))
+
 
 ;;--------------------------------------------------------------------
 ;; LaTeX options
