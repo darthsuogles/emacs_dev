@@ -1,7 +1,7 @@
 ;; org-mode
 ;;; Code:
-(add-to-list 'load-path (concat elisp_path "/org-mode/lisp"))
-(add-to-list 'load-path (concat elisp_path "/org-mode/contrib/lisp"))
+(add-to-list 'load-path (concat emacs-dev-root "/org-mode/lisp"))
+(add-to-list 'load-path (concat emacs-dev-root "/org-mode/contrib/lisp"))
 
 (setq org-root "~/org")
 (add-to-list 'auto-mode-alist '("\\.\\(org\\  |org_archive\\|txt\\)$" . org-mode))
@@ -47,7 +47,7 @@
          (R . t)
          (python . t)
          (rust . t)
-         (scala . t)
+         ;;(scala . t)
          (C . t)
          (shell . t)
          (stan . t)
@@ -64,8 +64,8 @@
   (interactive
    (let ((src-code-types '("emacs-lisp" "python" "C" "sh" "js"  "css"
                            "rust" "C++"
-			               "dot" "matlab" "sql" "ditaa" "haskell" "latex"
-			               "scala" "ocaml" "org" "perl" "ruby")))
+			   "dot" "sql" "haskell" "latex"
+			   "scala" "ocaml" "org" "perl")))
      (list (ido-completing-read "Source code type: " src-code-types))))
   (progn
     (newline-and-indent)

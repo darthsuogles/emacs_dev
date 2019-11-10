@@ -28,22 +28,19 @@ if [[ $# -gt 1 ]]; then
     fi
 fi
 
-server_pid="$(ps aux | grep -v grep | grep -Ei "${emacs_server_pattern}" | awk '{print $2}')"
-# Check if there is already an emacs process (has to be written like this)
-if [[ ! -z "${server_pid:-}" ]]; then
-    which osascript > /dev/null 2>&1 && \
-	osascript -e 'tell application "Emacs" to activate'
-    # Get the number of all frames
-    num_frames="$(${emacs_client} -e '(length (frame-list))')"
-    if [[ ${num_frames} -lt 2 ]]; then
-        # Create a new frame if we only have the minimized server frame
-        args=-nc
-    else
-        # Just launch on the existing frame window
-        args=-n
-    fi
-    exec "${emacs_client}" "${args}" --quiet --no-wait "$@" &
-else
+ps aux | grep -v grep | grep -Ei "${emacs_server_pattern}" || {
     echo "Initializing emacs server"
-    exec "${emacs_server}" --daemon
+    "${emacs_server}" --daemon
+}
+# which osascript > /dev/null 2>&1 && \
+    #     osascript -e 'tell application "Emacs" to activate'
+# Get the number of all frames
+num_frames="$(${emacs_client} -e '(length (frame-list))')"
+if [[ ${num_frames} -lt 2 ]]; then
+    # Create a new frame if we only have the minimized server frame
+    args=-nc
+else
+    # Just launch on the existing frame window
+    args=-n
 fi
+exec "${emacs_client}" "${args}" --quiet --no-wait "$@" &

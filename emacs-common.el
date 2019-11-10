@@ -1,23 +1,15 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; global variable definition
+;;; emacs-common.el -- source of emacs customization
+;;; Commentary:
+;;;
+;;; Code:
+;;;
 
-;; additional .el load path
-(setq elisp_path "~/CodeBase/emacs_dev")
-(add-to-list 'load-path elisp_path)
-(dolist (pkg_dir '("use-package"
-                   "xterm-color"
-                   "emacs-async"
-                   "emacs-sbt-mode"
-                   "scala-mode2"))
-  (add-to-list 'load-path (concat elisp_path "/" pkg_dir)))
+(defconst codebase-root (expand-file-name "~/CodeBase"))
+(defconst emacs-dev-root (concat codebase-root "/emacs_dev"))
+(defconst sygadry-tools-emacs-root (concat codebase-root "/sygaldry/tools/emacs"))
 
-
-;; Very basic key modifications for OSX
-;; Duplicated at the end of the file for fear that some mode might modify them
-(setq mac-option-key-is-meta t)
-(setq mac-command-key-is-meta t)
-(setq mac-command-modifier 'meta)
-(setq mac-option-modifier 'meta)
+(add-to-list 'load-path emacs-dev-root)
+(add-to-list 'load-path sygadry-tools-emacs-root)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Emacs server
@@ -31,7 +23,6 @@
 ;; (require 'bind-key)                ;; if you use any :bind variant
 
 (require 'package)
-(add-to-list 'load-path (concat elisp_path "/use-package"))
 (setq
  use-package-always-ensure t
  package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
@@ -44,21 +35,47 @@
   (package-refresh-contents)
   (package-install 'use-package)
   (package-install 'async))
-(require 'use-package) ;; get the dependencies
-(dired-async-mode 1) ;;
 
-(defvar package-depslist
-  '(helm s company magit projectile dash async
-         use-package evil helm-flx swiper-helm
-         web-mode tuareg utop ess lua-mode z3-mode
-         markdown-mode
-         ensime sbt-mode elpy
-         solarized-theme)
-  "A list of dependencies to be installed")
+(defconst package-depslist
+  '(
+    async
+    bazel-mode
+    company
+    clang-format
+    dash
+    dap-mode
+    elpy
+    ensime
+    ess
+    evil
+    flycheck-pyre
+    go-mode
+    helm
+    helm-flx
+    helm-lsp
+    lua-mode
+    lsp-mode
+    lsp-ui
+    magit
+    magit-popup
+    markdown-mode
+    projectile
+    s
+    solarized-theme
+    swiper-helm
+    terraform-mode
+    tuareg
+    use-package
+    utop
+    web-mode
+    xterm-color
+    z3-mode
+    )
+  "A list of dependencies to be installed.")
 
 (require 'cl) ;; use the common-lisp extension
-(defun package-deps-installed-p ()
-  "Return true if the dependencies are all installed"
+(defun package-deps-installed-p()
+  "Return non-nil if the dependencies are all installed."
   (loop for pkg in package-depslist
         when (not (package-installed-p pkg)) do (return nil)
         finally (return t)))
@@ -68,6 +85,15 @@
   (dolist (pkg package-depslist)
     (when (not (package-installed-p pkg))
       (package-install pkg))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;--------------------------------------------------------------------
+;; Load packages with `use-package`
+;;
+;;--------------------------------------------------------------------
+
+(require 'use-package) ;; get the dependencies
+(dired-async-mode 1) ;;
 
 (use-package helm
   :commands helm-config
@@ -112,10 +138,11 @@
 ;; Also remember to set TERM accordingly (xterm-256color)
 ;; Keep up-to-date https://github.com/atomontage/xterm-color
 (use-package xterm-color
-  :load-path "xterm-color/"
+  ;; :load-path "xterm-color/"
   :config
   (add-hook 'comint-preoutput-filter-functions 'xterm-color-filter)
-  (setq comint-output-filter-functions (remove 'ansi-color-process-output comint-output-filter-functions))
+  (setq comint-output-filter-functions
+	(remove 'ansi-color-process-output comint-output-filter-functions))
   )
 
 ;; You can also use it with eshell (and thus get color output from system ls):
@@ -133,77 +160,133 @@
 ;; Programming Language Environment
 ;;
 ;;--------------------------------------------------------------------
+
+(dap-mode 1)
+(dap-ui-mode 1)
+
+(use-package lsp-mode
+  :hook
+  (go-mode . lsp)
+  (c++-mode . lsp)
+  :commands lsp)
+
+;; optionally
+(use-package lsp-ui :commands lsp-ui-mode)
+;;(use-package company-lsp :commands company-lsp)
+(use-package helm-lsp :commands helm-lsp-workspace-symbol)
+;; optionally if you want to use debugger
+(use-package dap-mode)
+;; (use-package dap-LANGUAGE) to load the dap adapter for your language
+
+
+;;--------------------------------------------------------------------
 ;; Python
-(elpy-enable)
+
+;; (require 'flycheck-pyre)
+;; (eval-after-load 'flycheck
+;;   '(add-hook 'flycheck-mode-hook #'flycheck-pyre-setup))
+
+(defun python-mode-flycheck-checkers-hook ()
+  "Configure all your checkers for `python-mode` here."
+  (flycheck-mode)
+  (flycheck-select-checker 'python-pylint)
+  )
+(add-hook 'python-mode-hook #'python-mode-flycheck-checkers-hook)
+
+;; (elpy-enable)
 ;; (setq python-shell-interpreter "jupyter"
 ;;       python-shell-interpreter-args "console --simple-prompt"
 ;;       python-shell-prompt-detect-failure-warning nil)
 ;; (add-to-list 'python-shell-completion-native-disabled-interpreters
 ;;              "jupyter")
-(setq elpy-modules '(elpy-module-sane-defaults
-                     elpy-module-company
-                     elpy-module-eldoc
-                     elpy-module-highlight-indentation
-                     elpy-module-yasnippet))
-
-;; FROM: https://github.com/jorgenschaefer/elpy/wiki/Customizations
-;; You may sometimes find when you try to navigate to a function/class definition with
-;; `elpy-goto-definition` (M-.), that instead of jumping to the definition, you get the
-;; message "No definition found". If you see this error often (because of the nature of
-;; the code you work on), you can use the following function instead of/in addition to
-;; `elpy-goto-definition`:
-(defun elpy-goto-definition-or-rgrep ()
-  "Go to the definition of the symbol at point, if found. Otherwise, run `elpy-rgrep-symbol'."
-  (interactive)
-  (ring-insert find-tag-marker-ring (point-marker))
-  (condition-case nil (elpy-goto-definition)
-    (error (elpy-rgrep-symbol
-            (concat "\\(def\\|class\\)\s" (thing-at-point 'symbol) "(")))))
-
-;; This function will try to find the definition of the symbol at point using elpy-goto-definition,
-;; but will do elpy-rgrep-symbol instead, if the former function fails to return a result. You can
-;; bind this function to the key combination of your choice, or you can bind it to M-. to use it as
-;; a replacement for the the default goto-definition function:
-;; (define-key elpy-mode-map (kbd "M-.") 'elpy-goto-definition-or-rgrep)
-
-
-;; https://github.com/emacs-mirror/emacs/commit/dbb341022870ecad4c9177485a6770a355633cc0
-(defun python-shell-completion-native-try ()
-  "Return non-nil if can trigger native completion."
-  (let ((python-shell-completion-native-enable t)
-        (python-shell-completion-native-output-timeout
-         python-shell-completion-native-try-output-timeout))
-    (python-shell-completion-native-get-completions
-     (get-buffer-process (current-buffer))
-     nil "_")))
+;; (setq elpy-modules '(elpy-module-sane-defaults
+;;                      elpy-module-company
+;;                      elpy-module-eldoc
+;;                      elpy-module-highlight-indentation
+;;                      elpy-module-yasnippet))
 
 ;;--------------------------------------------------------------------
 ;; C++
-(load "cling-mode.el")
-(require 'cling-mode)
+
+;; Let's disable `cling` until it becomes more stable.
+;; (load "cling-mode.el")
+;; (require 'cling-mode)
+
 (require 'clang-format)
 
 (setq-default c-basic-offset 2)
 (with-eval-after-load 'cc-mode
   (fset 'c-indent-region 'clang-format-region)
-  (setq c-basic-offset 2
-        tab-width 2
-        indent-tabs-mode nil)
+  (setq c-basic-offset 4
+        tab-width 4
+        indent-tabs-mode nil
+	clang-format-executable "/opt/third_party/llvm/bin/clang-format"
+	)
   (bind-keys :map c-mode-base-map
              ("C-M-\\" . clang-format-region)
-  ))
+             ))
+
+(add-hook 'c++-mode-hook (lambda () (setq flycheck-gcc-language-standard "c++1z")))
+(add-hook 'c++-mode-hook (lambda () (setq flycheck-clang-language-standard "c++1z")))
+
+(defun subprocess--check-output (command-and-args)
+  "Run a subprocess call with COMMAND-AND-ARGS and fetch output."
+  (replace-regexp-in-string "\n$" ""
+                            (shell-command-to-string command-and-args))
+  )
+
+(defun setup-flycheck-for-cpp ()
+  "Add bazel external paths for linters."
+  (interactive)
+  (let (
+        (bzl-extern (subprocess--check-output "bazel info output_base"))
+        )
+    (setq flycheck-clang-include-path
+          (list
+           (concat bzl-extern "/external/com_google_gtest/googletest/include")
+           (concat bzl-extern "/external/com_google_gtest/googlemock/include")
+           )
+          )
+  )
+)
 
 ;;--------------------------------------------------------------------
 ;; Go
+(defconst gopath (expand-file-name "~/CodeBase/sygaldry/golang"))
 (add-hook 'go-mode-hook
           (lambda ()
             (add-hook 'before-save-hook 'gofmt-before-save)
             (setq tab-width 4)
             (setq indent-tabs-mode 1)))
 
+(use-package lsp-mode
+  :commands (lsp lsp-deferred))
+
+(add-hook 'go-mode-hook #'lsp-deferred)
+
+;; optional - provides fancier overlays
+(use-package lsp-ui
+  :commands lsp-ui-mode)
+
+;; ;; if you use company-mode for completion 
+;; ;; (otherwise, complete-at-point works out of the box):
+;; (use-package company-lsp
+;;   :commands company-lsp)
+
+
+;; (require 'gore-shell-mode)
+;; (setq gore-bin-path (concat gopath "/bin/gore"))
+;; (setq gorepl-command (concat gopath "/bin/gore"))
+;; (add-hook 'go-mode-hook
+;;           (lambda() "Hook for key-bindings."
+;;             (define-key go-mode-map (kbd "C-c C-c") 'gore-shell-eval-region)
+;;             (define-key go-mode-map (kbd "C-c C-z") 'run-gore-shell)
+;;             ))
+
+
 ;;--------------------------------------------------------------------
 ;; Scala
-(load "scala-custom.el")
+(require 'scala-custom)
 
 ;;--------------------------------------------------------------------
 ;; OCaml
@@ -224,39 +307,11 @@
 
 ;;--------------------------------------------------------------------
 ;; Coq
-(load (concat elisp_path "/prfgnrl/generic/proof-site.el"))
+;;(load (concat emacs-dev-root "/prfgnrl/generic/proof-site.el"))
 ;;(setq auto-mode-alist (cons '("\\.v$" . coq-mode) auto-mode-alist))
 ;; (autoload 'coq-mode "coq" "Major mode for editing Coq vernacular." t)
 
 ;;--------------------------------------------------------------------
-;; Lua / Torch7
-(require 'torch-mode)
-(autoload 'torch-mode "lua-mode" "Lua editing mode." t)
-(add-to-list 'auto-mode-alist '("\\.lua$" . torch-mode))
-(add-to-list 'interpreter-mode-alist '("th" . torch-mode))
-;; (setq
-;;  torch-default-application "th"
-;;  torch-default-command-switches '("-i" "-g" "-a" "torch_repl_init.lua")
-;;  )
-
-;; (use-package torch-mode
-;;   :load-path elisp_path
-;;   :pin manual
-;;   :mode "\\.lua\\'"
-;;   :interpreter "th"
-;;   :init
-;;   (setq
-;;    torch-default-application "th"
-;;    torch-default-command-switches '("-i" "-g" "-a" "torch_repl_init.lua")
-;;    )
-;;   :bind
-;;   (:map torch-mode-map
-;;         ("C-c C-z" . run-torch)
-;;         ("C-c C-c" . torch-send-defun)
-;;         ("C-c C-l" . torch-send-current-line)
-;;         ("C-c C-r" . torch-send-region)
-;;    )
-;;   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; org-mode (site-lisp is the install location)
@@ -332,18 +387,23 @@
 
 (defun spack-pkg-include(pkg_digest &optional include_prefix)
   (let ((inc-path (if include_prefix include_prefix "include")))
-        (concat spack-root "/" pkg_digest "/" inc-path)
+    (concat spack-root "/" pkg_digest "/" inc-path)
     )
   )
 
-(add-hook 'c++mode-hook (lambda () (setq flycheck-clang-include-path
-                                    (list
-                                     (spack-pkg-include "boost-1.70.0-kl27accx4oo6wouath344kvgytgp2fkf")
-                                     (spack-pkg-include "eigen-3.3.7-bd2r4aqrkox7dpebj2r3gqvgpqzwuh7x"
-                                                        "include/eigen3")
-                                     )
-                                    )
-                          ))
+(defconst spack-cpp-headers
+  (list
+   (spack-pkg-include
+    "boost-1.70.0-kl27accx4oo6wouath344kvgytgp2fkf"
+    )
+   (spack-pkg-include
+    "eigen-3.3.7-bd2r4aqrkox7dpebj2r3gqvgpqzwuh7x"
+    "include/eigen3")
+   )
+  )
+
+(add-hook 'c++mode-hook
+	  (lambda () (setq flycheck-clang-include-path spack-cpp-headers)))
 
 ;; (package-install 'flycheck-pos-tip)
 ;; (eval-after-load 'flycheck (flycheck-pos-tip-mode))
@@ -373,7 +433,11 @@
 (load "emacs-rc-pretty-lambda.el")
 
 ;; Removing trailing white spaces when saving
-(add-hook 'before-save-hook 'delete-trailing-whitespace)
+(add-hook 'before-save-hook
+          'delete-trailing-whitespace)
+;; Untabify
+(add-hook 'before-save-hook
+          'untabify)
 
 ;; global variables
 (setq
@@ -402,9 +466,8 @@
  visible-bell nil
  global-visual-line-mode t
  word-wrap t
+ indent-tabs-mode nil
  ns-pop-up-frames nil)
-
-(setq-default indent-tabs-mode nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; set themes at last
