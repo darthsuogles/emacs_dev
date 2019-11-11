@@ -155,6 +155,15 @@
   (setq eshell-output-filter-functions (remove 'eshell-handle-ansi-color eshell-output-filter-functions))
   )
 
+(use-package multi-term
+  :init
+  (setq multi-term-program "/opt/spack/zsh/bin/zsh")
+  :config
+  (add-to-list 'term-bind-key-alist '("M-{" . multi-term-prev))
+  (add-to-list 'term-bind-key-alist '("M-}" . multi-term-next))
+  (bind-keys ("C-M-d" . multi-term-dedicated-toggle))
+  )
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;--------------------------------------------------------------------
 ;; Programming Language Environment
@@ -178,6 +187,13 @@
 (use-package dap-mode)
 ;; (use-package dap-LANGUAGE) to load the dap adapter for your language
 
+
+;;--------------------------------------------------------------------
+;; SQL Postgres
+
+(setq 
+ sql-postgres-program "/opt/spack/sygaldry/bin/psql"
+ )
 
 ;;--------------------------------------------------------------------
 ;; Python
@@ -322,7 +338,7 @@
 (require 'magit-popup)
 
 (defun magit-arcanist--do-diff ()
-  ;; Perform arcanist operations
+  "Perform arcanist operations."
   (interactive)
   (let ((repo-root (magit-toplevel))
 	(curr-fname (buffer-file-name))
